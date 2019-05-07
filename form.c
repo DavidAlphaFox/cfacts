@@ -5,6 +5,7 @@
 #include <string.h>
 #include "env.h"
 #include "form.h"
+#include "form_string.h"
 #include "package.h"
 
 u_form * nil ()
@@ -53,6 +54,16 @@ s_symbol * new_symbol (s_string *string)
                 sym->string = string;
         }
         return sym;
+}
+
+s_symbol * gensym (const char *name)
+{
+        static long counter = 0;
+        char c[20];
+        s_string *s = new_string(strlen(name), name);
+        snprintf(c, sizeof(c), "%ld", counter++);
+        string_append(s, c, strlen(c));
+        return new_symbol(s);
 }
 
 s_package * new_package (s_symbol *name)

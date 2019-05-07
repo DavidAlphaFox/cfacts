@@ -85,6 +85,7 @@ u_form * cspecial_labels (u_form *args, s_env *env);
 u_form * cspecial_flet (u_form *args, s_env *env);
 
 u_form * cfun_error (u_form *args, s_env *env);
+u_form * cfun_gensym (u_form *args, s_env *env);
 
 u_form * cfun_eval (u_form *args, s_env *env);
 u_form * cfun_apply (u_form *args, s_env *env);

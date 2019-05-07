@@ -317,6 +317,7 @@ void env_init (s_env *env, s_stream *si)
         cspecial("labels",         cspecial_labels,         env);
         cspecial("flet",           cspecial_flet,           env);
         cfun("error",          cfun_error,          env);
+        cfun("gensym",         cfun_gensym,         env);
         cfun("eval",           cfun_eval,           env);
         cfun("apply",          cfun_apply,          env);
         cfun("funcall",        cfun_funcall,        env);

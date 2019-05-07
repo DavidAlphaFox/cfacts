@@ -98,6 +98,7 @@ u_form *    nil ();
 s_cons *    new_cons (u_form *car, u_form *cdr);
 s_string *  new_string (unsigned long length, const char *str);
 s_symbol *  new_symbol (s_string *string);
+s_symbol *  gensym (const char *name);
 s_package * new_package (s_symbol *name);
 s_lambda *  new_lambda (s_symbol *type, s_symbol *name,
                         u_form *lambda_list, u_form *body,

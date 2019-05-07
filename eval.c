@@ -992,6 +992,23 @@ u_form * cfun_error (u_form *args, s_env *env)
         return error_(&args->cons.car->string, env);
 }
 
+u_form * cfun_gensym (u_form *args, s_env *env)
+{
+        static s_string *g = NULL;
+        s_string *s;
+        if (!g)
+                g = new_string(1, "g");
+        s = g;
+        if (consp(args)) {
+                if (!stringp(args->cons.car) ||
+                    args->cons.cdr != nil())
+                        return error(env, "invalid arguments for "
+                                     "gensym");
+                s = &args->cons.car->string;
+        }
+        return (u_form*) gensym(string_str(s));
+}
+
 u_form * apply (u_form *fun, u_form *args, s_env *env)
 {
         u_form *a = args;
