@@ -190,6 +190,25 @@ u_form * read_string (s_stream *stream)
         return NULL;
 }
 
+int endchar (int c)
+{
+        return c == '(' || c == ')' || c == '"' || c == ' ' ||
+                c == '\t' || c == '\r' || c == '\n' || c == '\'';
+}
+
+u_form * read_uninterned_symbol (s_stream *stream)
+{
+        s_string *s;
+        u_form *f;
+        unsigned long i = stream->start;
+        while (i < stream->end && !endchar(stream->s[i]))
+                i++;
+        s = new_string(i - stream->start, stream->s + stream->start);
+        f = (u_form*) new_symbol(s);
+        stream->start = i;
+        return f;
+}
+
 u_form * read_sharp (s_stream *stream, s_env *env)
 {
         if (peek_char(stream) == '#') {
@@ -201,16 +220,13 @@ u_form * read_sharp (s_stream *stream, s_env *env)
                         read_char(stream);
                         return cons_function(read_form(stream, env));
                         break;
+                case ':':
+                        read_char(stream);
+                        return read_uninterned_symbol(stream);
                 }
                 return error(env, "undefined # macro character %c", c);
         }
         return NULL;
-}
-
-int endchar (int c)
-{
-        return c == '(' || c == ')' || c == '"' || c == ' ' ||
-                c == '\t' || c == '\r' || c == '\n' || c == '\'';
 }
 
 u_form * read_number (s_stream *stream)
@@ -238,19 +254,34 @@ u_form * read_number (s_stream *stream)
         return NULL;
 }
 
-u_form * read_symbol (s_stream *stream)
+u_form * read_symbol (s_stream *stream, s_env *env)
 {
+        s_package *pkg = package(env);
+        s_string *s;
+        s_symbol *pkg_name;
         u_form *f;
         unsigned long i = stream->start;
-        unsigned long j = i;
-        while (i < stream->end && !endchar(stream->s[i])) {
-                j = i;
+        while (i < stream->end && !endchar(stream->s[i])
+               && stream->s[i] != ':')
                 i++;
+        if (i == stream->start && stream->s[i] == ':')
+                pkg = keyword_package();
+        else if (stream->s[i] == ':') {
+                s = new_string(i - stream->start,
+                               stream->s + stream->start);
+                pkg_name = new_symbol(s);
+                pkg = find_package(pkg_name, env);
+                stream->start = ++i;
+                if (stream->start < stream->end &&
+                    stream->s[stream->start] == ':')
+                        stream->start++;
         }
-        j = i;
-        f = (u_form*) new_string(j - stream->start, stream->s + stream->start);
-        f = (u_form*) intern(&f->string, NULL);
-        stream->start = j;
+        while (i < stream->end && !endchar(stream->s[i]))
+                i++;
+        s = new_string(i - stream->start,
+                       stream->s + stream->start);
+        f = (u_form*) intern(s, pkg);
+        stream->start = i;
         return f;
 }
 
@@ -318,7 +349,7 @@ u_form * read_form (s_stream *stream, s_env *env)
         if ((f = read_number(stream)))
                 return f;
         read_errors(stream, env);
-        if ((f = read_symbol(stream)))
+        if ((f = read_symbol(stream, env)))
                 return f;
         if (refill(stream))
                 return NULL;
@@ -331,7 +362,7 @@ u_form * load_stream (s_stream *stream, s_env *env)
         u_form *f;
         s_error_handler eh;
         if (!t_sym)
-                t_sym = sym("t");
+                t_sym = sym("t", NULL);
         if (setjmp(eh.buf)) {
                 fprintf(stderr, "error while loading %s line %lu\n",
                         stream->file_name, stream->line);

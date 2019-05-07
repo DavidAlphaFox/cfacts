@@ -1,10 +1,10 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include "env.h"
+#include "eval.h"
 #include "form.h"
 #include "package.h"
-
-s_skiplist *g_packages;
 
 int compare_symbols (void *a, void *b)
 {
@@ -23,32 +23,63 @@ int compare_symbols (void *a, void *b)
         return strcmp(string_str(sa->string), string_str(sb->string));
 }
 
+s_package * common_lisp_package ()
+{
+        static s_package *pkg = NULL;
+        if (!pkg) {
+                s_symbol *sym = make_symbol("common-lisp", NULL);
+                pkg = (s_package*) new_package(sym);
+        }
+        return pkg;
+}
+
+s_package * keyword_package ()
+{
+        static s_package *pkg = NULL;
+        if (!pkg) {
+                s_symbol *sym = make_symbol("keyword", NULL);
+                pkg = new_package(sym);
+        }
+        return pkg;
+}
+
 s_package * cfacts_package ()
 {
-        static s_package *cfacts;
-        if (!cfacts) {
-                const char *name = "cfacts";
-                s_string *str = (s_string*) new_string(strlen(name), name);
-                s_symbol *sym = (s_symbol*) new_symbol(str);
-                cfacts = (s_package*) new_package(sym);
-                sym = intern(str, cfacts);
-                cfacts->name = sym;
+        static s_package *pkg = NULL;
+        if (!pkg) {
+                s_symbol *sym = make_symbol("cfacts", NULL);
+                pkg = new_package(sym);
+                push(pkg->uses, (u_form*) common_lisp_package());
         }
-        return cfacts;
+        return pkg;
+}
+
+s_symbol * make_symbol (const char *name, s_package *pkg)
+{
+        s_string *str = new_string(strlen(name), name);
+        s_symbol *sym = new_symbol(str);
+        sym->package = pkg;
+        return sym;
 }
 
 s_symbol * find_symbol (s_string *s, s_package *pkg)
 {
         s_symbol sym;
         s_skiplist_node *n;
-        if (!pkg)
-                pkg = cfacts_package();
+        u_form *p;
         sym.type = FORM_SYMBOL;
         sym.package = pkg;
         sym.string = s;
         n = skiplist_find(pkg->symbols, &sym);
         if (n)
                 return n->value;
+        p = pkg->uses;
+        while (consp(p)) {
+                s_symbol *found = find_symbol(s, &p->cons.car->package);
+                if (found)
+                        return found;
+                p = p->cons.cdr;
+        }
         return NULL;
 }
 
@@ -70,7 +101,7 @@ s_symbol * intern (s_string *s, s_package *pkg)
                 if (sym)
                         return sym;
         }
-        sym = (s_symbol*) new_symbol(s);
+        sym = new_symbol(s);
         sym->package = pkg;
         if (pkg)
                 skiplist_insert(pkg->symbols, sym);
@@ -87,9 +118,14 @@ s_symbol * intern_ (const char *s, s_package *pkg)
         return intern(str, pkg);
 }
 
-s_symbol * sym (const char *s)
+s_symbol * sym (const char *s, s_env *env)
 {
-        return intern_(s, NULL);
+        s_package *pkg;
+        if (env)
+                pkg = package(env);
+        else
+                pkg = common_lisp_package();
+        return intern_(s, pkg);
 }
 
 void unintern (s_string *s, s_package *pkg)
@@ -121,11 +157,30 @@ int compare_packages (void *a, void *b)
         return compare_symbols(pa->name, pb->name);
 }
 
-s_package * find_package (s_string *name);
-
-void init_packages (void)
+s_package * find_package (s_symbol *name, s_env *env)
 {
-        g_packages = new_skiplist(10, M_E);
-        g_packages->compare = compare_packages;
-        skiplist_insert(g_packages, cfacts_package());
+        s_package pkg;
+        s_skiplist_node *n;
+        pkg.name = name;
+        n = skiplist_find(env->packages, &pkg);
+        if (n)
+                return (s_package*) n->value;
+        return NULL;
+}
+
+void init_packages (s_env *env)
+{
+        env->packages = new_skiplist(10, M_E);
+        env->packages->compare = compare_packages;
+        skiplist_insert(env->packages, common_lisp_package());
+        skiplist_insert(env->packages, cfacts_package());
+        skiplist_insert(env->packages, keyword_package());
+}
+
+s_package * package (s_env *env)
+{
+        u_form *f = eval((u_form*) sym("*package*", NULL), env);
+        if (f->type == FORM_PACKAGE)
+                return &f->package;
+        return NULL;
 }

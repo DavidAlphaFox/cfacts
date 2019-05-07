@@ -105,4 +105,7 @@ u_form * cfun_div (u_form *args, s_env *env);
 
 u_form * cfun_load (u_form *args, s_env *env);
 
+u_form * cfun_find_package (u_form *args, s_env *env);
+u_form * cfun_symbol_package (u_form *args, s_env *env);
+
 #endif

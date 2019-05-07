@@ -10,7 +10,7 @@ void prin1_cons (s_cons *cons, FILE *stream, s_env *env)
 {
         u_form *quote_sym = NULL;
         if (!quote_sym)
-                quote_sym = (u_form*) sym("quote");
+                quote_sym = (u_form*) sym("quote", NULL);
         if (cons->car == quote_sym && cons->cdr->type == FORM_CONS &&
             cons->cdr->cons.cdr == nil()) {
                 fputc('\'', stream);

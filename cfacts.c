@@ -39,7 +39,6 @@ int main ()
 {
         s_stream *stream;
         srand(42);
-        init_packages();
         if (isatty(0))
                 stream = stream_readline("cfacts> ");
         else

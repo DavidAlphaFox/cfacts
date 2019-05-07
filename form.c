@@ -12,7 +12,7 @@ u_form * nil ()
 {
         static u_form *nil_sym = NULL;
         if (!nil_sym)
-                nil_sym = (u_form*) sym("nil");
+                nil_sym = (u_form*) sym("nil", NULL);
         return nil_sym;
 }
 
@@ -74,6 +74,7 @@ s_package * new_package (s_symbol *name)
                 pkg->name = name;
                 pkg->symbols = new_skiplist(10, M_E);
                 pkg->symbols->compare = compare_symbols;
+                pkg->uses = NULL;
         }
         return pkg;
 }

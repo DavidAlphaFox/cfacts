@@ -73,7 +73,7 @@ u_form * funcall_lambda (s_lambda *lambda, u_form *args, s_env *env)
                 s_symbol *s = &f->cons.car->symbol;
                 if (!symbolp(f->cons.car))
                         return error(env, "invalid lambda list");
-                if (s == sym("&rest") || s == sym("&body"))
+                if (s == sym("&rest", NULL) || s == sym("&body", NULL))
                         rest = 1;
                 else if (rest) {
                         if (f->cons.cdr != nil())

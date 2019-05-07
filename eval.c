@@ -15,7 +15,7 @@ u_form * eval_nil (u_form *form)
 {
         static u_form *nil_sym = NULL;
         if (!nil_sym)
-                nil_sym = (u_form*) sym("nil");
+                nil_sym = (u_form*) sym("nil", NULL);
         if (form == nil_sym)
                 return nil();
         return NULL;
@@ -25,7 +25,7 @@ u_form * eval_t (u_form *form)
 {
         static u_form *t_sym = NULL;
         if (!t_sym)
-                t_sym = (u_form*) sym("t");
+                t_sym = (u_form*) sym("t", NULL);
         if (form == t_sym)
                 return t_sym;
         return NULL;
@@ -67,7 +67,7 @@ u_form * eval_beta (u_form *form, s_env *env)
 {
         u_form *lambda_sym = NULL;
         if (!lambda_sym)
-                lambda_sym = (u_form*) sym("lambda");
+                lambda_sym = (u_form*) sym("lambda", NULL);
         if (caar(form) == lambda_sym) {
                 u_form *f = eval(form->cons.car, env);
                 u_form *a = mapcar_eval(form->cons.cdr, env);
@@ -99,7 +99,7 @@ u_form * cons_quote (u_form *x)
 {
         static u_form *quote_sym = NULL;
         if (!quote_sym)
-                quote_sym = (u_form*) sym("quote");
+                quote_sym = (u_form*) sym("quote", NULL);
         return (u_form*) new_cons(quote_sym,
                                   (u_form*) new_cons(x, nil()));
 }
@@ -116,7 +116,7 @@ u_form * cons_backquote (u_form *x)
 {
         static u_form *backquote_sym = NULL;
         if (!backquote_sym)
-                backquote_sym = (u_form*) sym("backquote");
+                backquote_sym = (u_form*) sym("backquote", NULL);
         return cons(backquote_sym, cons(x, nil()));
 }
 
@@ -124,7 +124,7 @@ u_form * cons_comma_at (u_form *x, s_env *env)
 {
         static u_form *s = NULL;
         if (!s)
-                s = (u_form*) sym("*comma-atsign*");
+                s = (u_form*) sym("*comma-atsign*", NULL);
         return cons(eval(s, env), cons(x, nil()));
 }
 
@@ -132,7 +132,7 @@ u_form * cons_comma_dot (u_form *x, s_env *env)
 {
         static u_form *s = NULL;
         if (!s)
-                s = (u_form*) sym("*comma-dot*");
+                s = (u_form*) sym("*comma-dot*", NULL);
         return cons(eval(s, env), cons(x, nil()));
 }
 
@@ -140,7 +140,7 @@ u_form * cons_comma (u_form *x, s_env *env)
 {
         static u_form *s = NULL;
         if (!s)
-                s = (u_form*) sym("*comma*");
+                s = (u_form*) sym("*comma*", NULL);
         return cons(eval(s, env), cons(x, nil()));
 }
 
@@ -148,7 +148,7 @@ u_form * atom (u_form *form)
 {
         static u_form *t = NULL;
         if (!t)
-                t = (u_form*) sym("t");
+                t = (u_form*) sym("t", NULL);
         if (consp(form))
                 return nil();
         return t;
@@ -165,7 +165,7 @@ u_form * cfun_atom (u_form *args, s_env *env)
 u_form * eq (u_form *a, u_form *b) {
         static u_form *t = NULL;
         if (!t)
-                t = (u_form*) sym("t");
+                t = (u_form*) sym("t", NULL);
         if (a == b)
                 return t;
         if (integerp(a) && integerp(b) &&
@@ -340,8 +340,8 @@ u_form * cspecial_case (u_form *args, s_env *env)
         static u_form *otherwise_sym = NULL;
         u_form *key;
         if (!t_sym) {
-                t_sym = (u_form*) sym("t");
-                otherwise_sym = (u_form*) sym("otherwise");
+                t_sym = (u_form*) sym("t", NULL);
+                otherwise_sym = (u_form*) sym("otherwise", NULL);
         }
         if (!consp(args))
                 return error(env, "invalid case form");
@@ -480,7 +480,7 @@ u_form * cspecial_and (u_form *args, s_env *env)
         static u_form *t_sym = NULL;
         u_form *test;
         if (!t_sym)
-                t_sym = (u_form*) sym("t");
+                t_sym = (u_form*) sym("t", NULL);
         test = t_sym;
         while (consp(args) && test != nil()) {
                 test = eval(args->cons.car, env);
@@ -504,7 +504,7 @@ u_form * cfun_not (u_form *args, s_env *env)
 {
         static u_form *t_sym = NULL;
         if (!t_sym)
-                t_sym = (u_form*) sym("t");
+                t_sym = (u_form*) sym("t", NULL);
         if (!consp(args) || args->cons.cdr != nil())
                 return error(env, "invalid arguments for not");
         if (args->cons.car == nil())
@@ -516,7 +516,7 @@ u_form * cfun_consp (u_form *args, s_env *env)
 {
         static u_form *t_sym = NULL;
         if (!t_sym)
-                t_sym = (u_form*) sym("t");
+                t_sym = (u_form*) sym("t", NULL);
         if (!consp(args) || args->cons.cdr != nil())
                 return error(env, "invalid arguments for consp");
         if (consp(args->cons.car))
@@ -528,7 +528,7 @@ u_form * cfun_stringp (u_form *args, s_env *env)
 {
         static u_form *t_sym = NULL;
         if (!t_sym)
-                t_sym = (u_form*) sym("t");
+                t_sym = (u_form*) sym("t", NULL);
         if (!consp(args) || args->cons.cdr != nil())
                 return error(env, "invalid arguments for stringp");
         if (stringp(args->cons.car))
@@ -540,7 +540,7 @@ u_form * cfun_symbolp (u_form *args, s_env *env)
 {
         static u_form *t_sym = NULL;
         if (!t_sym)
-                t_sym = (u_form*) sym("t");
+                t_sym = (u_form*) sym("t", NULL);
         if (!consp(args) || args->cons.cdr != nil())
                 return error(env, "invalid arguments for symbolp");
         if (symbolp(args->cons.car))
@@ -552,7 +552,7 @@ u_form * cfun_packagep (u_form *args, s_env *env)
 {
         static u_form *t_sym = NULL;
         if (!t_sym)
-                t_sym = (u_form*) sym("t");
+                t_sym = (u_form*) sym("t", NULL);
         if (!consp(args) || args->cons.cdr != nil())
                 return error(env, "invalid arguments for packagep");
         if (packagep(args->cons.car))
@@ -564,7 +564,7 @@ u_form * cfun_functionp (u_form *args, s_env *env)
 {
         static u_form *t_sym = NULL;
         if (!t_sym)
-                t_sym = (u_form*) sym("t");
+                t_sym = (u_form*) sym("t", NULL);
         if (!consp(args) || args->cons.cdr != nil())
                 return error(env, "invalid arguments for functionp");
         if (functionp(args->cons.car))
@@ -921,7 +921,7 @@ u_form * cspecial_lambda (u_form *args, s_env *env)
         s_lambda *l;
         if (!consp(args) || !consp(args->cons.cdr))
                 return error(env, "invalid lambda form");
-        l = new_lambda(sym("lambda"), &nil()->symbol,
+        l = new_lambda(sym("lambda", NULL), &nil()->symbol,
                                  args->cons.car, args->cons.cdr,
                                  env);
         return (u_form*) l;
@@ -941,7 +941,7 @@ u_form * cons_function (u_form *x)
 {
         static u_form *function_sym = NULL;
         if (!function_sym)
-                function_sym = (u_form*) sym("function");
+                function_sym = (u_form*) sym("function", NULL);
         return cons(function_sym, cons(x, nil()));
 }
 
@@ -1041,7 +1041,7 @@ u_form * funcall (u_form *fun, u_form *args, s_env *env)
                 pop_backtrace_frame(env);
                 return result;
         }
-        if (car(fun) == (u_form*) sym("lambda"))
+        if (car(fun) == (u_form*) sym("lambda", NULL))
                 fun = eval(fun, env);
         if (fun->type == FORM_LAMBDA)
                 return funcall_lambda(&fun->lambda, args, env);
@@ -1240,4 +1240,30 @@ u_form * cfun_load (u_form *args, s_env *env)
             args->cons.cdr != nil())
                 return error(env, "invalid arguments for load");
         return load_file(string_str(&args->cons.car->string), env);
+}
+
+u_form * cfun_find_package (u_form *args, s_env *env)
+{
+        u_form *f;
+        s_package *pkg;
+        if (!consp(args) || args->cons.cdr != nil())
+                return error(env, "invalid arguments for find-package");
+        f = args->cons.car;
+        if (stringp(f))
+                f = (u_form*) new_symbol(&f->string);
+        if (!symbolp(f))
+                return error(env, "invalid arguments for find-package");
+        pkg = find_package(&f->symbol, env);
+        if (pkg)
+                return (u_form*) pkg;
+        return nil();
+}
+
+u_form * cfun_symbol_package (u_form *args, s_env *env)
+{
+        if (!consp(args) || !symbolp(args->cons.car) ||
+            args->cons.cdr != nil())
+                return error(env, "invalid arguments for "
+                             "symbol-package");
+        return (u_form*) args->cons.car->symbol.package;
 }

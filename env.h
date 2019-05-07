@@ -17,6 +17,7 @@ struct env
         s_tags *tags;
         s_unwind_protect *unwind_protect;
         s_backtrace_frame *backtrace;
+        s_skiplist *packages;
 };
 
 s_env g_env;

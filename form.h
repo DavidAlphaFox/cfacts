@@ -27,6 +27,7 @@ struct package {
         unsigned long type;
         s_symbol *name;
         s_skiplist *symbols;
+        u_form *uses;
 };
 
 struct cfun {

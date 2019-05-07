@@ -139,7 +139,7 @@ u_form * let (u_form *bindings, u_form *body, s_env *env)
 
 void cfun (const char *name, f_cfun *fun, s_env *env)
 {
-        s_symbol *name_sym = sym(name);
+        s_symbol *name_sym = sym(name, env);
         u_form *cf = malloc(sizeof(s_cfun));
         if (cf) {
                 u_form *c;
@@ -153,7 +153,7 @@ void cfun (const char *name, f_cfun *fun, s_env *env)
 
 void cspecial (const char *name, f_cfun *fun, s_env *env)
 {
-        s_symbol *name_sym = sym(name);
+        s_symbol *name_sym = sym(name, env);
         u_form *cf = malloc(sizeof(s_cfun));
         if (cf) {
                 u_form *c;
@@ -171,7 +171,7 @@ u_form * defun (s_symbol *name, u_form *lambda_list, u_form *body,
         static s_symbol *function_sym = NULL;
         s_lambda *l;
         if (!function_sym)
-                function_sym = sym("function");
+                function_sym = sym("function", NULL);
         l = new_lambda(function_sym, name, lambda_list,
                                  body, env);
         frame_new_function(name, l, env->global_frame);
@@ -192,7 +192,7 @@ u_form * defmacro (s_symbol *name, u_form *lambda_list, u_form *body,
         static s_symbol *macro_sym = NULL;
         s_lambda *l;
         if (!macro_sym)
-                macro_sym = sym("macro");
+                macro_sym = sym("macro", NULL);
         l = new_lambda(macro_sym, name, lambda_list,
                                  body, env);
         frame_new_macro(name, l, env->global_frame);
@@ -206,7 +206,7 @@ u_form * labels (u_form *bindings, u_form *body, s_env *env)
         s_frame *f = new_frame(env->frame);
         u_form *r;
         if (!labels_sym)
-                labels_sym = sym("labels");
+                labels_sym = sym("labels", NULL);
         env->frame = f;
         while (consp(bindings)) {
                 u_form *first = bindings->cons.car;
@@ -238,7 +238,7 @@ u_form * flet (u_form *bindings, u_form *body, s_env *env)
         s_frame *f = new_frame(env->frame);
         u_form *r;
         if (!flet_sym)
-                flet_sym = sym("flet");
+                flet_sym = sym("flet", NULL);
         while (consp(bindings)) {
                 u_form *first = bindings->cons.car;
                 u_form *name;
@@ -270,6 +270,9 @@ void env_init (s_env *env, s_stream *si)
         env->frame = env->global_frame = new_frame(NULL);
         env->specials = nil();
         env->tags = NULL;
+        init_packages(env);
+        defparameter(sym("*package*", NULL),
+                     (u_form*) common_lisp_package(), env);
         cspecial("quote",          cspecial_quote,          env);
         cfun("atom",           cfun_atom,           env);
         cfun("eq",             cfun_eq,             env);
@@ -328,8 +331,12 @@ void env_init (s_env *env, s_stream *si)
         cfun("*",              cfun_mul,            env);
         cfun("/",              cfun_div,            env);
         cfun("load",           cfun_load,           env);
+        cfun("find-package",   cfun_find_package,   env);
+        cfun("symbol-package", cfun_symbol_package, env);
         load_file("init.lisp", env);
         load_file("backquote.lisp", env);
+        defparameter(sym("*package*", NULL),
+                     (u_form*) cfacts_package(), env);
 }
 
 s_frame * push_frame (s_env *env)
