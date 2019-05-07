@@ -336,7 +336,13 @@ u_form * cspecial_cond (u_form *args, s_env *env)
 
 u_form * cspecial_case (u_form *args, s_env *env)
 {
+        static u_form *t_sym = NULL;
+        static u_form *otherwise_sym = NULL;
         u_form *key;
+        if (!t_sym) {
+                t_sym = (u_form*) sym("t");
+                otherwise_sym = (u_form*) sym("otherwise");
+        }
         if (!consp(args))
                 return error(env, "invalid case form");
         key = eval(args->cons.car, env);
@@ -346,8 +352,7 @@ u_form * cspecial_case (u_form *args, s_env *env)
                 if (!consp(args->cons.car))
                         return error(env, "invalid case form");
                 keys = args->cons.car->cons.car;
-                if (keys == (u_form*) sym("t") ||
-                    keys == (u_form*) sym("otherwise")) {
+                if (keys == t_sym || keys == otherwise_sym) {
                         if (consp(args->cons.cdr))
                                 return error(env, "case otherwise clause should be at end");
                         return cspecial_progn(args->cons.car->cons.cdr,
