@@ -179,8 +179,14 @@ void init_packages (s_env *env)
 
 s_package * package (s_env *env)
 {
-        u_form *f = eval((u_form*) sym("*package*", NULL), env);
-        if (f->type == FORM_PACKAGE)
-                return &f->package;
-        return NULL;
+        static s_symbol *package_sym = NULL;
+        u_form *f;
+        if (!package_sym)
+                package_sym = sym("*package*", NULL);
+        f = eval((u_form*) package_sym, env);
+        if (f->type != FORM_PACKAGE) {
+                f = (u_form*) cfacts_package();
+                setq(package_sym, f, env);
+        }
+        return &f->package;
 }
