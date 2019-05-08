@@ -333,6 +333,7 @@ void env_init (s_env *env, s_stream *si)
         cfun("load",           cfun_load,           env);
         cfun("find-package",   cfun_find_package,   env);
         cfun("symbol-package", cfun_symbol_package, env);
+        cfun("find-symbol",    cfun_find_symbol,    env);
         load_file("init.lisp", env);
         load_file("backquote.lisp", env);
         defparameter(sym("*package*", NULL),

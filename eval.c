@@ -1267,3 +1267,29 @@ u_form * cfun_symbol_package (u_form *args, s_env *env)
                              "symbol-package");
         return (u_form*) args->cons.car->symbol.package;
 }
+
+u_form * cfun_find_symbol (u_form *args, s_env *env)
+{
+        s_package *pkg = NULL;
+        s_symbol *sym;
+        (void) env;
+        if (!consp(args) || !stringp(args->cons.car))
+                return error(env, "invalid arguments for find-symbol");
+        if (consp(args->cons.cdr)) {
+                if ((args->cons.cdr->cons.car != nil() &&
+                     !packagep(args->cons.cdr->cons.car)) ||
+                    args->cons.cdr->cons.cdr != nil())
+                        return error(env, "invalid arguments for "
+                                     "find-symbol");
+                if (args->cons.cdr->cons.car == nil())
+                        pkg = package(env);
+                else
+                        pkg = &args->cons.cdr->cons.car->package;
+        }
+        if (!pkg)
+                pkg = package(env);
+        sym = find_symbol(&args->cons.car->string, pkg);
+        if (sym)
+                return (u_form*) sym;
+        return nil();
+}
