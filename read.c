@@ -256,7 +256,7 @@ u_form * read_number (s_stream *stream)
 
 u_form * read_symbol (s_stream *stream, s_env *env)
 {
-        s_package *pkg = package(env);
+        s_package *pkg = NULL;
         s_string *s;
         s_symbol *pkg_name;
         u_form *f;
@@ -264,20 +264,35 @@ u_form * read_symbol (s_stream *stream, s_env *env)
         while (i < stream->end && !endchar(stream->s[i])
                && stream->s[i] != ':')
                 i++;
-        if (i == stream->start && stream->s[i] == ':')
+        if (i == stream->start && stream->s[i] == ':') {
                 pkg = keyword_package();
+                stream->start = ++i;
+        }
         else if (stream->s[i] == ':') {
                 s = new_string(i - stream->start,
                                stream->s + stream->start);
                 pkg_name = new_symbol(s);
                 pkg = find_package(pkg_name, env);
                 stream->start = ++i;
-                if (stream->start < stream->end &&
-                    stream->s[stream->start] == ':')
-                        stream->start++;
+                if (i < stream->end &&
+                    stream->s[i] == ':')
+                        stream->start = ++i;
+        }
+        if (i < stream->end && stream->s[i] == ':') {
+                stream->start = ++i;
+                error(env, "too many columns after package %s",
+                      string_str(pkg->name->string));
         }
         while (i < stream->end && !endchar(stream->s[i]))
                 i++;
+        if (i == stream->start) {
+                if (pkg)
+                        error(env, "no symbol name after package %s",
+                              string_str(pkg->name->string));
+                return NULL;
+        }
+        if (!pkg)
+                pkg = package(env);
         s = new_string(i - stream->start,
                        stream->s + stream->start);
         f = (u_form*) intern(s, pkg);
