@@ -1,6 +1,9 @@
 
+#include <alloca.h>
 #include <stdlib.h>
 #include <string.h>
+#define __USE_MISC 1
+#include <math.h>
 #include "env.h"
 #include "eval.h"
 #include "form.h"

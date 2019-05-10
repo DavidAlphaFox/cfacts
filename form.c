@@ -1,12 +1,16 @@
 
 #include <assert.h>
+#define __USE_MISC 1
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "env.h"
 #include "form.h"
 #include "form_string.h"
 #include "package.h"
+
+int snprintf(char *str, size_t size, const char *format, ...);
 
 u_form * nil ()
 {

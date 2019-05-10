@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#define __USE_XOPEN2K8 1
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>

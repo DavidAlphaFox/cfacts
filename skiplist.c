@@ -1,9 +1,12 @@
 
 #include <assert.h>
+#define _BSD_SOURCE 1
 #include <stdlib.h>
 #include <strings.h>
 #include "form.h"
 #include "skiplist.h"
+
+long int random(void);
 
 s_skiplist_node * new_skiplist_node (void *value, int height)
 {

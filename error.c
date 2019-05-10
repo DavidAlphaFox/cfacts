@@ -5,6 +5,8 @@
 #include "print.h"
 #include "unwind_protect.h"
 
+int vasprintf(char **strp, const char *fmt, va_list ap);
+
 void push_error_handler (s_error_handler *eh, s_env *env)
 {
         eh->string = NULL;
