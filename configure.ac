@@ -38,5 +38,7 @@ AC_ARG_ENABLE(debug,
   [debug=true])
 AM_CONDITIONAL([DEBUG], [test x"$debug" = x"true"])
 
+AC_FUNC_ALLOCA
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
