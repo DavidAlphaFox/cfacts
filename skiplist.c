@@ -20,11 +20,6 @@ s_skiplist_node * new_skiplist_node (void *value, int height)
         return n;
 }
 
-void delete_skiplist_node (s_skiplist_node *n)
-{
-        free(n);
-}
-
 /*
   Random height
   -------------
@@ -168,8 +163,6 @@ void * skiplist_delete (s_skiplist *sl, void *x)
                 skiplist_node_next(p, level) = skiplist_node_next(n, level);
         }
         value = n->value;
-        delete_skiplist_node(pred);
-        delete_skiplist_node(n);
         sl->length--;
         return value;
 }
@@ -187,15 +180,4 @@ s_skiplist_node * skiplist_find (s_skiplist *sl, void *value)
                         return n;
         }
         return NULL;
-}
-
-void delete_skiplist (s_skiplist *sl)
-{
-        while (skiplist_node_next(sl->head, 0)) {
-                s_skiplist_node *next =
-                        skiplist_node_next(sl->head, 0);
-                skiplist_delete(sl, next);
-        }
-        delete_skiplist_node(sl->head);
-        free(sl);
 }
