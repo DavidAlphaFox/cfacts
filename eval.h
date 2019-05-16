@@ -111,5 +111,7 @@ u_form * cfun_find_symbol (u_form *args, s_env *env);
 
 u_form * cfun_values (u_form *args, s_env *env);
 u_form * cspecial_nth_value (u_form *args, s_env *env);
+u_form * cspecial_multiple_value_bind (u_form *args, s_env *env);
+u_form * cspecial_multiple_value_list (u_form *args, s_env *env);
 
 #endif

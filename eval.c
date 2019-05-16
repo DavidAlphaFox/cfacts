@@ -1310,6 +1310,18 @@ u_form * cfun_values (u_form *args, s_env *env)
         return (u_form*) v;
 }
 
+u_form * nth_value (unsigned long n, u_form *form)
+{
+        if (valuesp(form)) {
+                if (n < form->values.count)
+                        return values_(form)[n];
+                return nil();
+        }
+        if (n == 0)
+                return form;
+        return nil();
+}
+
 u_form * cspecial_nth_value (u_form *args, s_env *env)
 {
         u_form *n;
@@ -1321,12 +1333,44 @@ u_form * cspecial_nth_value (u_form *args, s_env *env)
         if (!integerp(n) || n->lng.lng < 0)
                 return error(env, "invalid N argument for nth-value");
         form = eval(args->cons.cdr->cons.car, env);
-        if (valuesp(form)) {
-                if ((unsigned long) n->lng.lng < form->values.count)
-                        return values_(form)[n->lng.lng];
-                return nil();
+        return nth_value((unsigned long) n->lng.lng, form);
+}
+
+u_form * cspecial_multiple_value_bind (u_form *args, s_env *env)
+{
+        u_form *vars;
+        u_form *form;
+        u_form *body;
+        unsigned long i = 0;
+        u_form *bindings;
+        if (!consp(args) || !consp(args->cons.car) ||
+            !consp(args->cons.cdr))
+                return error(env, "invalid multiple-value-bind form");
+        vars = args->cons.car;
+        form = eval(args->cons.cdr->cons.car, env);
+        body = args->cons.cdr->cons.cdr;
+        while (consp(vars)) {
+                u_form *value = nth_value(i++, form);
+                push(bindings, cons(vars->cons.car,
+                                    cons(value, nil())));
+                vars = vars->cons.cdr;
         }
-        if (n->lng.lng == 0)
-                return form;
-        return nil();
+        return let(bindings, body, env);
+}
+
+u_form * cspecial_multiple_value_list (u_form *args, s_env *env)
+{
+        u_form *f;
+        u_form *list = nil();
+        if (!consp(args) || args->cons.cdr != nil())
+                return error(env, "invalid multiple-value-list form");
+        f = eval(args->cons.car, env);
+        if (valuesp(f)) {
+                unsigned long i = f->values.count;
+                while (i--)
+                        push(list, nth_value(i, f));
+        }
+        else
+                push(list, f);
+        return list;
 }
