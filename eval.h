@@ -109,4 +109,6 @@ u_form * cfun_find_package (u_form *args, s_env *env);
 u_form * cfun_symbol_package (u_form *args, s_env *env);
 u_form * cfun_find_symbol (u_form *args, s_env *env);
 
+u_form * cfun_values (u_form *args, s_env *env);
+
 #endif

@@ -90,6 +90,8 @@ void prin1 (u_form *f, FILE *stream, s_env *env)
                 return;
         }
         switch (f->type) {
+        case FORM_VALUES:
+                prin1(value_(f), stream, env);
         case FORM_CONS:
                 prin1_cons(&f->cons, stream, env);
                 break;

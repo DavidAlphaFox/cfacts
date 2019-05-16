@@ -1,6 +1,7 @@
 #ifndef TYPEDEFS_H
 #define TYPEDEFS_H
 
+typedef struct values  s_values;
 typedef struct cons    s_cons;
 typedef struct string  s_string;
 typedef struct symbol  s_symbol;

@@ -20,13 +20,24 @@ u_form * nil ()
         return nil_sym;
 }
 
+s_values * new_values (unsigned long count)
+{
+        s_values *values = malloc(sizeof(s_values) +
+                                  count * sizeof(u_form*));
+        if (values) {
+                values->type = FORM_VALUES;
+                values->count = count;
+        }
+        return values;
+}
+
 s_cons * new_cons (u_form *car, u_form *cdr)
 {
         s_cons *cons = malloc(sizeof(s_cons));
         if (cons) {
                 cons->type = FORM_CONS;
-                cons->car = car;
-                cons->cdr = cdr;
+                cons->car = valuesp(car) ? value_(car) : car;
+                cons->cdr = valuesp(cdr) ? value_(cdr) : cdr;
         }
         return cons;
 }

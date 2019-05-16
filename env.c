@@ -53,6 +53,8 @@ u_form * setq (s_symbol *name, u_form *value, s_env *env)
         u_form **f = symbol_variable(name, env);
         if (!f)
                 return error(env, "unbound symbol %s", string_str(name->string));
+        if (valuesp(value))
+                value = value_(value);
         *f = value;
         return value;
 }
@@ -62,8 +64,11 @@ u_form * defparameter (s_symbol *name, u_form *value, s_env *env)
         u_form **f = frame_variable(name, env->global_frame);
         if (!f)                
                 frame_new_variable(name, value, env->global_frame);
-        else
+        else {
+                if (valuesp(value))
+                        value = value_(value);
                 *f = value;
+        }
         return (u_form*) name;
 }
 
@@ -334,6 +339,7 @@ void env_init (s_env *env, s_stream *si)
         cfun("find-package",   cfun_find_package,   env);
         cfun("symbol-package", cfun_symbol_package, env);
         cfun("find-symbol",    cfun_find_symbol,    env);
+        cfun("values",         cfun_values,         env);
         load_file("init.lisp", env);
         load_file("backquote.lisp", env);
         defparameter(sym("*package*", NULL),

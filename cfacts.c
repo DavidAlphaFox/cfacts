@@ -27,8 +27,17 @@ int repl (s_env *env)
                                 break;
                         }
                         e = eval(r, env);
-                        prin1(e, stdout, env);
-                        puts("");
+                        if (valuesp(e)) {
+                                unsigned long i;
+                                for (i = 0; i < e->values.count; i++) {
+                                        u_form *v = values_(e)[i];
+                                        prin1(v, stdout, env);
+                                        puts("");
+                                }
+                        } else {
+                                prin1(e, stdout, env);
+                                puts("");
+                        }
                         pop_error_handler(env);
                 }
         }

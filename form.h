@@ -4,6 +4,14 @@
 #include "skiplist.h"
 #include "typedefs.h"
 
+struct values {
+        unsigned long type;
+        unsigned long count;
+};
+
+#define values_(v) ((u_form**) (((s_values*) v) + 1))
+#define value_(v) (values_(v)[0])
+
 struct cons {
         unsigned long type;
         u_form *car;
@@ -57,6 +65,7 @@ struct dbl {
 
 union form {
         unsigned long type;
+        s_values values;
         s_cons cons;
         s_string string;
         s_symbol symbol;
@@ -68,7 +77,8 @@ union form {
         s_skiplist skiplist;
 };
 
-enum e_form_type { FORM_CONS,
+enum e_form_type { FORM_VALUES,
+                   FORM_CONS,
                    FORM_STRING,
                    FORM_SYMBOL,
                    FORM_PACKAGE,
@@ -79,6 +89,7 @@ enum e_form_type { FORM_CONS,
                    FORM_SKIPLIST };
 
 #define null(x)    ((x) == nil())
+#define valuesp(x) ((x) && (x)->type == FORM_VALUES)
 #define consp(x)   ((x) && (x)->type == FORM_CONS)
 #define listp(x)   ((x) && ((x)->type == FORM_CONS || x == nil()))
 #define stringp(x) ((x) && (x)->type == FORM_STRING)
@@ -90,12 +101,14 @@ enum e_form_type { FORM_CONS,
 #define floatp(x) ((x) && (x)->type == FORM_DOUBLE)
 #define numberp(x) (integerp(x) || floatp(x))
 
+#define value(x) (valuesp(x) ? value_(x) : x)
 #define push(place, x) place = cons(x, place)
 
 s_string *  init_string (s_string *s, unsigned long length,
                          const char *str);
 
 u_form *    nil ();
+s_values *  new_values (unsigned long count);
 s_cons *    new_cons (u_form *car, u_form *cdr);
 s_string *  new_string (unsigned long length, const char *str);
 s_symbol *  new_symbol (s_string *string);

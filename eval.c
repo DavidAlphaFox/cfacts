@@ -55,8 +55,8 @@ u_form * mapcar_eval (u_form *list, s_env *env)
         u_form *head = nil();
         u_form **tail = &head;
         while (consp(list)) {
-                *tail = (u_form*) new_cons(eval(list->cons.car, env),
-                                           nil());
+                u_form *e = eval(list->cons.car, env);
+                *tail = (u_form*) new_cons(e, nil());
                 tail = &(*tail)->cons.cdr;
                 list = list->cons.cdr;
         }
@@ -1292,4 +1292,20 @@ u_form * cfun_find_symbol (u_form *args, s_env *env)
         if (sym)
                 return (u_form*) sym;
         return nil();
+}
+
+u_form * cfun_values (u_form *args, s_env *env)
+{
+        unsigned long count;
+        s_values *v;
+        unsigned long i;
+        u_form *a = args;
+        (void) env;
+        count = length(args);
+        v = new_values(count);
+        for (i = 0; i < count; i++) {
+                values_(v)[i] = a->cons.car;
+                a = a->cons.cdr;
+        }
+        return (u_form*) v;
 }
