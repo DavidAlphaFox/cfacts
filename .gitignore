@@ -5,6 +5,7 @@
 /autom4te.cache/
 /build-aux/
 /cfacts
+/config.h
 /config.h.in
 /config.log
 /config.status
