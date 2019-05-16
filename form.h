@@ -23,7 +23,7 @@ struct string {
         unsigned long length;
 };
 
-#define string_str(s) ((char*)((s) + 1))
+#define string_str(s) ((char*)(((s_string*) s) + 1))
 
 struct symbol {
         unsigned long type;
