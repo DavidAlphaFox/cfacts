@@ -1309,3 +1309,24 @@ u_form * cfun_values (u_form *args, s_env *env)
         }
         return (u_form*) v;
 }
+
+u_form * cspecial_nth_value (u_form *args, s_env *env)
+{
+        u_form *n;
+        u_form *form;
+        if (!consp(args) || !consp(args->cons.cdr) ||
+            args->cons.cdr->cons.cdr != nil())
+                return error(env, "invalid nth-value form");
+        n = eval(args->cons.car, env);
+        if (!integerp(n) || n->lng.lng < 0)
+                return error(env, "invalid N argument for nth-value");
+        form = eval(args->cons.cdr->cons.car, env);
+        if (valuesp(form)) {
+                if ((unsigned long) n->lng.lng < form->values.count)
+                        return values_(form)[n->lng.lng];
+                return nil();
+        }
+        if (n->lng.lng == 0)
+                return form;
+        return nil();
+}
