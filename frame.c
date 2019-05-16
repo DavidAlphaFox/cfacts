@@ -16,13 +16,17 @@ s_frame * new_frame (s_frame *parent)
 
 void frame_new_variable (s_symbol *sym, u_form *value, s_frame *frame)
 {
-        u_form *a = (u_form*) new_cons((u_form*) sym, value);
+        u_form *a;
+        if (valuesp(value))
+                value = value_(value);
+        a = (u_form*) new_cons((u_form*) sym, value);
         frame->variables = (u_form*) new_cons(a, frame->variables);
 }
 
 void frame_new_function (s_symbol *sym, s_lambda *value, s_frame *frame)
 {
-        u_form *a = (u_form*) new_cons((u_form*) sym, (u_form*) value);
+        u_form *a;
+        a = (u_form*) new_cons((u_form*) sym, (u_form*) value);
         frame->functions = (u_form*) new_cons(a, frame->functions);
 }
 

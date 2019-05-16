@@ -36,8 +36,8 @@ s_cons * new_cons (u_form *car, u_form *cdr)
         s_cons *cons = malloc(sizeof(s_cons));
         if (cons) {
                 cons->type = FORM_CONS;
-                cons->car = valuesp(car) ? value_(car) : car;
-                cons->cdr = valuesp(cdr) ? value_(cdr) : cdr;
+                cons->car = car;
+                cons->cdr = cdr;
         }
         return cons;
 }

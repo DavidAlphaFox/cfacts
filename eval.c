@@ -56,6 +56,8 @@ u_form * mapcar_eval (u_form *list, s_env *env)
         u_form **tail = &head;
         while (consp(list)) {
                 u_form *e = eval(list->cons.car, env);
+                if (valuesp(e))
+                        e = value_(e);
                 *tail = (u_form*) new_cons(e, nil());
                 tail = &(*tail)->cons.cdr;
                 list = list->cons.cdr;
