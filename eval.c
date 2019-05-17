@@ -1354,7 +1354,8 @@ u_form * cspecial_multiple_value_bind (u_form *args, s_env *env)
         while (consp(vars)) {
                 u_form *value = nth_value(i++, form);
                 push(bindings, cons(vars->cons.car,
-                                    cons(value, nil())));
+                                    cons(cons_quote(value),
+                                         nil())));
                 vars = vars->cons.cdr;
         }
         return let(bindings, body, env);
