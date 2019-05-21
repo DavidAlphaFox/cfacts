@@ -48,6 +48,8 @@ void prin1_symbol (s_symbol *sym, FILE *stream)
 {
         if (!sym->package)
                 fputs("#:", stream);
+        if (sym->package == keyword_package())
+                fputc(':', stream);
         fputs(string_str(sym->string), stream);
 }
 
