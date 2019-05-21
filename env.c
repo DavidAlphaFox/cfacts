@@ -281,6 +281,7 @@ void env_init (s_env *env, s_stream *si)
         cspecial("quote",          cspecial_quote,          env);
         cfun("atom",           cfun_atom,           env);
         cfun("eq",             cfun_eq,             env);
+        cfun("eql",            cfun_eql,            env);
         cfun("cons",           cfun_cons,           env);
         cfun("car",            cfun_car,            env);
         cfun("cdr",            cfun_cdr,            env);

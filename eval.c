@@ -170,12 +170,6 @@ u_form * eq (u_form *a, u_form *b) {
                 t = (u_form*) sym("t", NULL);
         if (a == b)
                 return t;
-        if (integerp(a) && integerp(b) &&
-            a->lng.lng == b->lng.lng)
-                return t;
-        if (floatp(a) && floatp(b) &&
-            a->dbl.dbl == b->dbl.dbl)
-                return t;
         return NULL;
 }
 
@@ -188,6 +182,35 @@ u_form * cfun_eq (u_form *args, s_env *env)
                 return error(env, "invalid arguments for eq");
         f = eq(args->cons.car,
                args->cons.cdr->cons.car);
+        if (!f)
+                return nil();
+        return f;
+}
+
+u_form * eql (u_form *a, u_form *b) {
+        static u_form *t = NULL;
+        if (!t)
+                t = (u_form*) sym("t", NULL);
+        if (a == b)
+                return t;
+        if (integerp(a) && integerp(b) &&
+            a->lng.lng == b->lng.lng)
+                return t;
+        if (floatp(a) && floatp(b) &&
+            a->dbl.dbl == b->dbl.dbl)
+                return t;
+        return NULL;
+}
+
+u_form * cfun_eql (u_form *args, s_env *env)
+{
+        u_form *f;
+        (void) env;
+        if (!consp(args) || !consp(args->cons.cdr) ||
+            args->cons.cdr->cons.cdr != nil())
+                return error(env, "invalid arguments for eql");
+        f = eql(args->cons.car,
+                args->cons.cdr->cons.car);
         if (!f)
                 return nil();
         return f;
@@ -360,7 +383,7 @@ u_form * cspecial_case (u_form *args, s_env *env)
                         return cspecial_progn(args->cons.car->cons.cdr,
                                               env);
                 }
-                if (consp(keys) ? find(key, keys) : eq(key, keys))
+                if (consp(keys) ? find(key, keys) : eql(key, keys))
                         return cspecial_progn(args->cons.car->cons.cdr,
                                               env);
                 args = args->cons.cdr;
@@ -639,7 +662,7 @@ u_form * cfun_list_star (u_form *args, s_env *env)
 u_form * find (u_form *item, u_form *list)
 {
         while (consp(list)) {
-                if (eq(list->cons.car, item))
+                if (eql(list->cons.car, item))
                         return list->cons.car;
                 list = list->cons.cdr;
         }
@@ -666,7 +689,7 @@ u_form * assoc (u_form *item, u_form *alist)
                 alist = alist->cons.cdr;
         }
         if (alist && consp(alist) && consp(alist->cons.car) &&
-            eq(item, alist->cons.car->cons.car))
+            eql(item, alist->cons.car->cons.car))
                 return alist->cons.car;
         return nil();
 }

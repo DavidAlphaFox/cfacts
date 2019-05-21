@@ -7,6 +7,7 @@
 u_form * cons_quote (u_form *form);
 u_form * atom (u_form *form);
 u_form * eq (u_form *a, u_form *b);
+u_form * eql (u_form *a, u_form *b);
 u_form * cons (u_form *car, u_form *cdr);
 u_form * car (u_form *form);
 u_form * cdr (u_form *form);
@@ -29,6 +30,7 @@ u_form * cons_comma (u_form *form, s_env *env);
 u_form * cspecial_quote (u_form *args, s_env *env);
 u_form * cfun_atom (u_form *args, s_env *env);
 u_form * cfun_eq (u_form *args, s_env *env);
+u_form * cfun_eql (u_form *args, s_env *env);
 u_form * cfun_cons (u_form *args, s_env *env);
 u_form * cfun_car (u_form *args, s_env *env);
 u_form * cfun_cdr (u_form *args, s_env *env);
