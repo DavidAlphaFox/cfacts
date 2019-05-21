@@ -31,6 +31,15 @@ u_form * eval_t (u_form *form)
         return NULL;
 }
 
+u_form * eval_keyword (u_form *form, s_env *env)
+{
+        (void) env;
+        if (symbolp(form) &&
+            form->symbol.package == keyword_package())
+                return form;
+        return NULL;
+}
+
 u_form * eval_variable (u_form *form, s_env *env)
 {
         if (symbolp(form)) {
@@ -1092,6 +1101,7 @@ u_form * eval (u_form *form, s_env *env)
         u_form *f;
         if ((f = eval_nil(form))) return f;
         if ((f = eval_t(form))) return f;
+        if ((f = eval_keyword(form, env))) return f;
         if ((f = eval_variable(form, env))) return f;
         if ((f = eval_atom(form))) return f;
         if ((f = eval_call(form, env))) return f;
