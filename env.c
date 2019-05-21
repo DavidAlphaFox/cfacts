@@ -346,6 +346,8 @@ void env_init (s_env *env, s_stream *si)
                  env);
         cspecial("multiple-value-list", cspecial_multiple_value_list,
                  env);
+        cspecial("multiple-value-setq", cspecial_multiple_value_setq,
+                 env);
         load_file("init.lisp", env);
         load_file("backquote.lisp", env);
         defparameter(sym("*package*", NULL),

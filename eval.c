@@ -1400,3 +1400,26 @@ u_form * cspecial_multiple_value_list (u_form *args, s_env *env)
                 push(list, f);
         return list;
 }
+
+u_form * cspecial_multiple_value_setq (u_form *args, s_env *env)
+{
+        u_form *vars;
+        u_form *form;
+        u_form *result = NULL;
+        unsigned long i = 0;
+        if (!consp(args) || !consp(args->cons.car) ||
+            !consp(args->cons.cdr) || args->cons.cdr->cons.cdr != nil())
+                return error(env, "invalid multiple-value-setq form");
+        vars = args->cons.car;
+        form = eval(args->cons.cdr->cons.car, env);
+        while (consp(vars)) {
+                u_form *value = nth_value(i++, form);
+                if (!result)
+                        result = value;
+                if (!symbolp(vars->cons.car))
+                        return error(env, "invalid multiple-value-setq variable");
+                setq(&vars->cons.car->symbol, value, env);
+                vars = vars->cons.cdr;
+        }
+        return result;
+}
