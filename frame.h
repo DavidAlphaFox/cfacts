@@ -22,4 +22,8 @@ u_form **     frame_variable (s_symbol *sym, s_frame *frame);
 u_form **     frame_function (s_symbol *sym, s_frame *frame);
 u_form **     frame_macro (s_symbol *sym, s_frame *frame);
 
+void          frame_destructuring_bind (u_form *lambda_list,
+                                        u_form *args,
+                                        s_frame *frame, s_env *env);
+
 #endif
