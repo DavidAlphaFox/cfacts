@@ -87,6 +87,35 @@ u_form * eval_beta (u_form *form, s_env *env)
         return NULL;
 }
 
+u_form * copy_list (u_form *list)
+{
+        u_form *head = nil();
+        u_form **tail = &head;
+        while (consp(list)) {
+                *tail = cons(list->cons.car, nil());
+                tail = &(*tail)->cons.cdr;
+                list = list->cons.cdr;
+        }
+        return head;
+}
+
+u_form * eval_call_special (u_form *form, u_form **f, s_env *env)
+{
+        u_form *result;
+        s_unwind_protect up;
+        push_backtrace_frame(*f, copy_list(form->cons.cdr), env);
+        if (setjmp(up.buf)) {
+                pop_unwind_protect(env);
+                pop_backtrace_frame(env);
+                longjmp(*up.jmp, 1);
+        }
+        push_unwind_protect(&up, env);
+        result = (*f)->cfun.fun(form->cons.cdr, env);
+        pop_unwind_protect(env);
+        pop_backtrace_frame(env);
+        return result;
+}
+
 u_form * eval_call (u_form *form, s_env *env)
 {
         if (consp(form) && symbolp(form->cons.car)) {
@@ -94,7 +123,7 @@ u_form * eval_call (u_form *form, s_env *env)
                 u_form **f;
                 u_form *a;
                 if ((f = symbol_special(sym, env)))
-                        return (*f)->cfun.fun(form->cons.cdr, env);
+                        return eval_call_special(form, f, env);
                 if ((f = symbol_macro(sym, env)))
                         return eval(funcall(*f, form->cons.cdr, env), env);
                 if (!(f = symbol_function(sym, env)))
