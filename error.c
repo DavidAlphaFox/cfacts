@@ -43,16 +43,25 @@ u_form * error (s_env *env, const char *msg, ...)
         return error_(new_string(len, buf), env);
 }
 
-void print_error (s_error_handler *eh, FILE *stream, s_env *env)
+void print_backtrace (s_backtrace_frame *bf, FILE *stream, s_env *env)
 {
-        s_backtrace_frame *bf;
-        fputs("cfacts: ", stream);
-        fputs(string_str(eh->string), stream);
-        fputs("\nBacktrace:", stream);
-        for (bf = eh->backtrace; bf; bf = bf->next) {
+        for (; bf; bf = bf->next) {
                 print(bf->fun, stream, env);
                 if (bf->vars)
                         prin1(bf->vars, stream, env);
         }
+}
+
+void print_error (s_error_handler *eh, FILE *stream, s_env *env)
+{
+        fputs("cfacts: ", stream);
+        fputs(string_str(eh->string), stream);
+        fputs("\nBacktrace:", stream);
+        print_backtrace(eh->backtrace, stream, env);
         fputs("\n", stream);
+}
+
+void backtrace ()
+{
+        print_backtrace(g_env.backtrace, stderr, &g_env);
 }
