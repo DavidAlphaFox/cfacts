@@ -282,9 +282,13 @@ void env_init (s_env *env, s_stream *si)
         cfun("atom",           cfun_atom,           env);
         cfun("eq",             cfun_eq,             env);
         cfun("eql",            cfun_eql,            env);
+        cfun("equal",          cfun_equal,          env);
         cfun("cons",           cfun_cons,           env);
         cfun("car",            cfun_car,            env);
         cfun("cdr",            cfun_cdr,            env);
+        cfun("cddr",           cfun_cddr,           env);
+        cfun("cadar",          cfun_cadar,          env);
+        cfun("cdddr",          cfun_cdddr,          env);
         cfun("rplaca",         cfun_rplaca,         env);
         cfun("rplacd",         cfun_rplacd,         env);
         cspecial("cond",           cspecial_cond,           env);
@@ -305,8 +309,12 @@ void env_init (s_env *env, s_stream *si)
         cfun("assoc",          cfun_assoc,          env);
         cfun("last",           cfun_last,           env);
         cfun("length",         cfun_length,         env);
+        cfun("reverse",        cfun_reverse,        env);
         cfun("append",         cfun_append,         env);
         cfun("nconc",          cfun_nconc,          env);
+        cfun("notany",         cfun_notany,         env);
+        cfun("every",          cfun_every,          env);
+        cfun("mapcar",         cfun_mapcar,         env);
         cspecial("let",            cspecial_let,            env);
         cspecial("let*",           cspecial_let_star,       env);
         cspecial("defvar",         cspecial_defvar,         env);

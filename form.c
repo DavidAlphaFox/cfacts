@@ -6,11 +6,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include "env.h"
+#include "eval.h"
 #include "form.h"
 #include "form_string.h"
 #include "package.h"
 
 int snprintf(char *str, size_t size, const char *format, ...);
+
+u_form * pop (u_form **place)
+{
+        u_form *top = car(*place);
+        *place = cdr(*place);
+        return top;
+}
 
 u_form * nil ()
 {

@@ -225,6 +225,40 @@ u_form * cfun_eql (u_form *args, s_env *env)
         return f;
 }
 
+
+u_form * equal (u_form *a, u_form *b) {
+        static u_form *t = NULL;
+        if (!t)
+                t = (u_form*) sym("t", NULL);
+        if (a == b)
+                return t;
+        if (integerp(a) && integerp(b) &&
+            a->lng.lng == b->lng.lng)
+                return t;
+        if (floatp(a) && floatp(b) &&
+            a->dbl.dbl == b->dbl.dbl)
+                return t;
+        if (consp(a) && consp(b) &&
+            equal(a->cons.car, b->cons.car) &&
+            equal(a->cons.cdr, b->cons.cdr))
+                return t;
+        return NULL;
+}
+
+u_form * cfun_equal (u_form *args, s_env *env)
+{
+        u_form *f;
+        (void) env;
+        if (!consp(args) || !consp(args->cons.cdr) ||
+            args->cons.cdr->cons.cdr != nil())
+                return error(env, "invalid arguments for equal");
+        f = equal(args->cons.car,
+                  args->cons.cdr->cons.car);
+        if (!f)
+                return nil();
+        return f;
+}
+
 u_form * cons (u_form *car, u_form *cdr)
 {
         return (u_form*) new_cons(car, cdr);
@@ -319,12 +353,28 @@ u_form * cddr (u_form *f)
         return nil();
 }
 
+u_form * cfun_cddr (u_form *args, s_env *env)
+{
+        (void) env;
+        if (!consp(args) || args->cons.cdr != nil())
+                return error(env, "invalid arguments for cddr");
+        return cddr(args->cons.car);
+}
+
 u_form * cadar (u_form *f)
 {
         if (consp(f) && consp(f->cons.car) &&
             consp(f->cons.car->cons.cdr))
                 return f->cons.car->cons.cdr->cons.car;
         return nil();
+}
+
+u_form * cfun_cadar (u_form *args, s_env *env)
+{
+        (void) env;
+        if (!consp(args) || args->cons.cdr != nil())
+                return error(env, "invalid arguments for cadar");
+        return cadar(args->cons.car);
 }
 
 u_form * caddr (u_form *f)
@@ -349,6 +399,14 @@ u_form * cdddr (u_form *f)
             consp(f->cons.cdr->cons.cdr))
                 return f->cons.cdr->cons.cdr->cons.cdr;
         return nil();
+}
+
+u_form * cfun_cdddr (u_form *args, s_env *env)
+{
+        (void) env;
+        if (!consp(args) || args->cons.cdr != nil())
+                return error(env, "invalid arguments for cdddr");
+        return cdddr(args->cons.car);
 }
 
 u_form * cspecial_cond (u_form *args, s_env *env)
@@ -749,6 +807,25 @@ u_form * cfun_length (u_form *args, s_env *env)
         return (u_form*) new_long(length(args->cons.car));
 }
 
+u_form * reverse (u_form *list)
+{
+        u_form *rev = nil();
+        while (consp(list)) {
+                push(rev, list->cons.car);
+                list = list->cons.cdr;
+        }
+        return rev;
+}
+
+u_form * cfun_reverse (u_form *args, s_env *env)
+{
+        (void) env;
+        if (!consp(args) || !listp(args->cons.car) ||
+            args->cons.cdr != nil())
+                return error(env, "invalid arguments for reverse");
+        return reverse(args->cons.car);
+}
+
 u_form * append (u_form *lists)
 {
         u_form *head = nil();
@@ -799,6 +876,77 @@ u_form * cfun_nconc (u_form *args, s_env *env)
 {
         (void) env;
         return nconc(args);
+}
+
+u_form * cfun_notany (u_form *args, s_env *env)
+{
+        u_form *pred;
+        u_form *lists;
+        u_form *l;
+        (void) env;
+        if (!consp(args) || !consp(args->cons.cdr))
+                return error(env, "invalid arguments for notany");
+        pred = args->cons.car;
+        lists = reverse(args->cons.cdr);
+        while (consp(car(lists))) {
+                u_form *args = nil();
+                l = lists;
+                while (consp(l)) {
+                        push(args, pop(&l->cons.car));
+                        l = l->cons.cdr;
+                }
+                if (funcall(pred, args, env) != nil())
+                        return nil();
+        }
+        return (u_form*) sym("t", NULL);
+}
+
+u_form * cfun_every (u_form *args, s_env *env)
+{
+        u_form *pred;
+        u_form *lists;
+        u_form *l;
+        (void) env;
+        if (!consp(args) || !consp(args->cons.cdr))
+                return error(env, "invalid arguments for every");
+        pred = args->cons.car;
+        lists = reverse(args->cons.cdr);
+        while (consp(car(lists))) {
+                u_form *args = nil();
+                l = lists;
+                while (consp(l)) {
+                        push(args, pop(&l->cons.car));
+                        l = l->cons.cdr;
+                }
+                if (funcall(pred, args, env) == nil())
+                        return nil();
+        }
+        return (u_form*) sym("t", NULL);
+}
+
+u_form * cfun_mapcar (u_form *args, s_env *env)
+{
+        u_form *pred;
+        u_form *lists;
+        u_form *l;
+        u_form *head = nil();
+        u_form **tail = &head;
+        (void) env;
+        if (!consp(args) || !consp(args->cons.cdr))
+                return error(env, "invalid arguments for mapcar");
+        pred = args->cons.car;
+        lists = reverse(args->cons.cdr);
+        while (consp(car(lists))) {
+                u_form *args = nil();
+                l = lists;
+                while (consp(l)) {
+                        push(args, pop(&l->cons.car));
+                        l = l->cons.cdr;
+                }
+                *tail = cons(funcall(pred, args, env), nil());
+                tail = &(*tail)->cons.cdr;
+        }
+        return head;
 }
 
 u_form * cspecial_setq (u_form *args, s_env *env)
@@ -879,18 +1027,6 @@ u_form * cspecial_return (u_form *args, s_env *env)
                 value = eval(args->cons.car, env);
         return_from(&nil()->symbol, value, env);
         return nil();
-}
-
-u_form * copy_list (u_form *list)
-{
-        u_form *head = nil();
-        u_form **tail = &head;
-        while (consp(list)) {
-                *tail = cons(list->cons.car, nil());
-                tail = &(*tail)->cons.cdr;
-                list = list->cons.cdr;
-        }
-        return head;
 }
 
 u_form * cspecial_tagbody (u_form *args, s_env *env)

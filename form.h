@@ -103,6 +103,7 @@ enum e_form_type { FORM_VALUES,
 
 #define value(x) (valuesp(x) ? value_(x) : x)
 #define push(place, x) place = cons(x, place)
+u_form * pop (u_form **place);
 
 s_string *  init_string (s_string *s, unsigned long length,
                          const char *str);
