@@ -1222,6 +1222,13 @@ u_form * apply (u_form *fun, u_form *args, s_env *env)
         return funcall(fun, a, env);
 }
 
+u_form * cfun_apply (u_form *args, s_env *env)
+{
+        if (!consp(args))
+                return error(env, "invalid apply call");
+        return apply(args->cons.car, args->cons.cdr, env);
+}
+
 u_form * funcall_cfun (u_form *fun, u_form *args, s_env *env)
 {
         u_form *result;
@@ -1253,13 +1260,6 @@ u_form * funcall (u_form *fun, u_form *args, s_env *env)
         if (fun && fun->type == FORM_LAMBDA)
                 return funcall_lambda(&fun->lambda, args, env);
         return error(env, "funcall argument is not a function");
-}
-
-u_form * cfun_apply (u_form *args, s_env *env)
-{
-        if (!consp(args))
-                return error(env, "invalid apply call");
-        return apply(args->cons.car, args->cons.cdr, env);
 }
 
 u_form * cfun_funcall (u_form *args, s_env *env)
