@@ -8,18 +8,49 @@
 
 void prin1_cons (s_cons *cons, FILE *stream, s_env *env)
 {
-        u_form *quote_sym = NULL;
-        if (!quote_sym)
+        static u_form *quote_sym = NULL;
+        static u_form *backquote_sym;
+        static u_form *comma_sym;
+        static u_form *comma_atsign_sym;
+        static u_form *comma_dot_sym;
+        if (!quote_sym) {
                 quote_sym = (u_form*) sym("quote", NULL);
-        if (cons->car == quote_sym && cons->cdr->type == FORM_CONS &&
+                backquote_sym = (u_form*) sym("backquote", NULL);
+                comma_sym = (u_form*) sym("comma", NULL);
+                comma_atsign_sym = (u_form*) sym("comma-atsign", NULL);
+                comma_dot_sym = (u_form*) sym("comma-dot", NULL);
+        }
+        if (symbolp(cons->car) && consp(cons->cdr) &&
             cons->cdr->cons.cdr == nil()) {
-                fputc('\'', stream);
-                prin1(cons->cdr->cons.car, stream, env);
-                return;
+                if (cons->car == quote_sym) {
+                        fputc('\'', stream);
+                        prin1(cons->cdr->cons.car, stream, env);
+                        return;
+                }
+                if (cons->car == backquote_sym) {
+                        fputc('`', stream);
+                        prin1(cons->cdr->cons.car, stream, env);
+                        return;
+                }
+                if (cons->car == comma_sym) {
+                        fputc(',', stream);
+                        prin1(cons->cdr->cons.car, stream, env);
+                        return;
+                }
+                if (cons->car == comma_atsign_sym) {
+                        fputs(",@", stream);
+                        prin1(cons->cdr->cons.car, stream, env);
+                        return;
+                }
+                if (cons->car == comma_dot_sym) {
+                        fputs(",.", stream);
+                        prin1(cons->cdr->cons.car, stream, env);
+                        return;
+                }
         }
         fputc('(', stream);
         prin1(cons->car, stream, env);
-        while (cons->cdr && cons->cdr->type == FORM_CONS) {
+        while (consp(cons->cdr)) {
                 fputc(' ', stream);
                 cons = &cons->cdr->cons;
                 prin1(cons->car, stream, env);

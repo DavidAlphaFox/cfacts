@@ -44,8 +44,6 @@
 (defun bq-process (x)
   (cond ((atom x)
          (list *bq-quote* x))
-        ((eq (car x) 'backquote)
-         (bq-process (eval (bq-completely-process (cadr x)))))
         ((eq (car x) *comma*) (cadr x))
         ((eq (car x) *comma-atsign*)
          (error ",@ after `"))
