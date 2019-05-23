@@ -14,6 +14,7 @@ typedef struct dbl     s_double;
 typedef union form u_form;
 
 typedef struct backtrace_frame s_backtrace_frame;
+typedef struct binding s_binding;
 typedef struct block s_block;
 typedef struct env s_env;
 typedef struct error_handler s_error_handler;

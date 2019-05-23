@@ -147,12 +147,10 @@ void cfun (const char *name, f_cfun *fun, s_env *env)
         s_symbol *name_sym = sym(name, env);
         u_form *cf = malloc(sizeof(s_cfun));
         if (cf) {
-                u_form *c;
                 cf->type = FORM_CFUN;
                 cf->cfun.name = name_sym;
                 cf->cfun.fun = fun;
-                c = cons((u_form*) name_sym, cf);
-                push(env->global_frame->functions, c);
+                frame_new_function(name_sym, cf, env->global_frame);
         }
 }
 
@@ -174,12 +172,12 @@ u_form * defun (s_symbol *name, u_form *lambda_list, u_form *body,
                 s_env *env)
 {
         static s_symbol *function_sym = NULL;
-        s_lambda *l;
+        u_form *lambda;
         if (!function_sym)
                 function_sym = sym("function", NULL);
-        l = new_lambda(function_sym, name, lambda_list,
-                                 body, env);
-        frame_new_function(name, l, env->global_frame);
+        lambda = (u_form*) new_lambda(function_sym, name, lambda_list,
+                                      body, env);
+        frame_new_function(name, lambda, env->global_frame);
         return (u_form*) name;
 }
 
@@ -218,7 +216,7 @@ u_form * labels (u_form *bindings, u_form *body, s_env *env)
                 u_form *name;
                 u_form *lambda_list;
                 u_form *body;
-                s_lambda *l;
+                u_form *lambda;
                 if (!consp(first) || !consp(first->cons.cdr))
                         return error(env, "invalid binding for labels");
                 name = first->cons.car;
@@ -226,9 +224,9 @@ u_form * labels (u_form *bindings, u_form *body, s_env *env)
                 body = first->cons.cdr->cons.cdr;
                 if (!symbolp(name))
                         return error(env, "invalid binding for labels");
-                l = new_lambda(labels_sym, &name->symbol,
-                               lambda_list, body, env);
-                frame_new_function(&name->symbol, l, f);
+                lambda = (u_form*) new_lambda(labels_sym, &name->symbol,
+                                              lambda_list, body, env);
+                frame_new_function(&name->symbol, lambda, f);
                 bindings = bindings->cons.cdr;
         }
         r = cspecial_progn(body, env);
@@ -249,7 +247,7 @@ u_form * flet (u_form *bindings, u_form *body, s_env *env)
                 u_form *name;
                 u_form *lambda_list;
                 u_form *body;
-                s_lambda *l;
+                u_form *lambda;
                 if (!consp(first) || !consp(first->cons.cdr))
                         return error(env, "invalid binding for flet");
                 name = first->cons.car;
@@ -257,9 +255,9 @@ u_form * flet (u_form *bindings, u_form *body, s_env *env)
                 body = first->cons.cdr->cons.cdr;
                 if (!symbolp(name))
                         return error(env, "invalid binding for flet");
-                l = new_lambda(flet_sym, &name->symbol,
-                               lambda_list, body, env);
-                frame_new_function(&name->symbol, l, f);
+                lambda = (u_form*) new_lambda(flet_sym, &name->symbol,
+                                              lambda_list, body, env);
+                frame_new_function(&name->symbol, lambda, f);
                 bindings = bindings->cons.cdr;
         }
         env->frame = f;

@@ -117,6 +117,19 @@ void prin1_double (s_double *dbl, FILE *stream)
         fprintf(stream, "%g", dbl->dbl);
 }
 
+void prin1_skiplist (s_skiplist *sl, FILE *stream, s_env *env)
+{
+        s_skiplist_node *n = skiplist_node_next(sl->head, 0);
+        fputc('(', stream);
+        while (n) {
+                prin1((u_form*) n->value, stream, env);
+                n = skiplist_node_next(n, 0);
+                if (n)
+                        fputc(' ', stream);
+        }
+        fputc(')', stream);
+}
+
 void prin1 (u_form *f, FILE *stream, s_env *env)
 {
         if (!f) {
@@ -148,6 +161,9 @@ void prin1 (u_form *f, FILE *stream, s_env *env)
                 break;
         case FORM_DOUBLE:
                 prin1_double(&f->dbl, stream);
+                break;
+        case FORM_SKIPLIST:
+                prin1_skiplist(&f->skiplist, stream, env);
                 break;
         default:
                 error(env, "unknown form type");

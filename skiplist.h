@@ -22,7 +22,8 @@ typedef struct skiplist {
         unsigned long max_height;
 } s_skiplist;
 
-#define           skiplist_height_table(sl) ((long*)((sl) + 1))
+#define skiplist_height_table(sl) ((long*) (((s_skiplist*) sl) + 1))
+#define skiplistp(sl) ((sl) && (sl)->type == FORM_SKIPLIST)
 
 s_skiplist *  new_skiplist (int max_height, double spacing);
 int               skiplist_compare_ptr (void *a, void *b);

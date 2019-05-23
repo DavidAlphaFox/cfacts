@@ -4,13 +4,26 @@
 #include "frame.h"
 #include "package.h"
 
+int compare_frame_bindings (void *a, void *b)
+{
+        s_cons *ca = (s_cons*) a;
+        s_cons *cb = (s_cons*) b;
+        if (a == b)
+                return 0;
+        if (!a)
+                return -1;
+        if (!b)
+                return 1;
+        return compare_symbols(ca->car, cb->car);
+}
+
 s_frame * new_frame (s_frame *parent)
 {
         s_frame *f = malloc(sizeof(s_frame));
         if (f) {
-                f->variables = nil();
-                f->functions = nil();
-                f->macros = nil();
+                f->variables = NULL;
+                f->functions = NULL;
+                f->macros = NULL;
                 f->parent = parent;
         }
         return f;
@@ -18,33 +31,54 @@ s_frame * new_frame (s_frame *parent)
 
 void frame_new_variable (s_symbol *sym, u_form *value, s_frame *frame)
 {
-        u_form *a;
+        s_cons *binding;
         if (valuesp(value))
                 value = value_(value);
-        a = (u_form*) new_cons((u_form*) sym, value);
-        frame->variables = (u_form*) new_cons(a, frame->variables);
+        binding = new_cons((u_form*) sym, value);
+        if (!frame->variables) {
+                frame->variables = new_skiplist(5, 4);
+                frame->variables->compare = compare_frame_bindings;
+        }
+        skiplist_insert(frame->variables, binding);
 }
 
-void frame_new_function (s_symbol *sym, s_lambda *value, s_frame *frame)
+void frame_new_function (s_symbol *sym, u_form *value, s_frame *frame)
 {
-        u_form *a;
-        a = (u_form*) new_cons((u_form*) sym, (u_form*) value);
-        frame->functions = (u_form*) new_cons(a, frame->functions);
+        s_cons *binding;
+        binding = new_cons((u_form*) sym, value);
+        if (!frame->functions) {
+                frame->functions = new_skiplist(5, 4);
+                frame->functions->compare = compare_frame_bindings;
+        }
+        skiplist_insert(frame->functions, binding);
 }
 
 void frame_new_macro (s_symbol *sym, s_lambda *value, s_frame *frame)
 {
-        u_form *a = (u_form*) new_cons((u_form*) sym, (u_form*) value);
-        frame->macros = (u_form*) new_cons(a, frame->macros);
+        s_cons *binding;
+        binding = new_cons((u_form*) sym, (u_form*) value);
+        if (!frame->macros) {
+                frame->macros = new_skiplist(5, 4);
+                frame->macros->compare = compare_frame_bindings;
+        }
+        skiplist_insert(frame->macros, binding);
 }
 
 u_form ** frame_variable (s_symbol *sym, s_frame *frame)
 {
+        s_cons search;
+        search.type = FORM_CONS;
+        search.car = (u_form*) sym;
+        search.cdr = NULL;
         while (frame) {
-                u_form *f;
-                f = assoc((u_form*) sym, frame->variables);
-                if (consp(f))
-                        return &f->cons.cdr;
+                if (frame->variables) {
+                        s_skiplist_node *n;
+                        n = skiplist_find(frame->variables, &search);
+                        if (n) {
+                                s_cons *binding = (s_cons*) n->value;
+                                return &binding->cdr;
+                        }
+                }
                 frame = frame->parent;
         }
         return NULL;
@@ -52,11 +86,19 @@ u_form ** frame_variable (s_symbol *sym, s_frame *frame)
 
 u_form ** frame_function (s_symbol *sym, s_frame *frame)
 {
+        s_cons search;
+        search.type = FORM_CONS;
+        search.car = (u_form*) sym;
+        search.cdr = NULL;
         while (frame) {
-                u_form *f;
-                f = assoc((u_form*) sym, frame->functions);
-                if (consp(f))
-                        return &f->cons.cdr;
+                if (frame->functions) {
+                        s_skiplist_node *n;
+                        n = skiplist_find(frame->functions, &search);
+                        if (n) {
+                                s_cons *binding = (s_cons*) n->value;
+                                return &binding->cdr;
+                        }
+                }
                 frame = frame->parent;
         }
         return NULL;
@@ -64,11 +106,19 @@ u_form ** frame_function (s_symbol *sym, s_frame *frame)
 
 u_form ** frame_macro (s_symbol *sym, s_frame *frame)
 {
+        s_cons search;
+        search.type = FORM_CONS;
+        search.car = (u_form*) sym;
+        search.cdr = NULL;
         while (frame) {
-                u_form *f;
-                f = assoc((u_form*) sym, frame->macros);
-                if (consp(f))
-                        return &f->cons.cdr;
+                if (frame->macros) {
+                        s_skiplist_node *n;
+                        n = skiplist_find(frame->macros, &search);
+                        if (n) {
+                                s_cons *binding = (s_cons*) n->value;
+                                return &binding->cdr;
+                        }
+                }
                 frame = frame->parent;
         }
         return NULL;

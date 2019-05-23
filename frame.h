@@ -1,20 +1,22 @@
 #ifndef FRAME_H
 #define FRAME_H
 
-#include "form.h"
+#include "typedefs.h"
 
 struct frame
 {
-        u_form *variables;
-        u_form *functions;
-        u_form *macros;
+        s_skiplist *variables;
+        s_skiplist *functions;
+        s_skiplist *macros;
         struct frame *parent;
 };
+
+int compare_frame_bindings (void *a, void *b);
 
 s_frame * new_frame (s_frame *parent);
 void          frame_new_variable (s_symbol *sym, u_form *value,
                                   s_frame *frame);
-void          frame_new_function (s_symbol *sym, s_lambda *value,
+void          frame_new_function (s_symbol *sym, u_form *value,
                                   s_frame *frame);
 void          frame_new_macro (s_symbol *sym, s_lambda *value,
                                s_frame *frame);
