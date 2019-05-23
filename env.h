@@ -11,7 +11,7 @@ struct env
         s_stream *si;
         s_frame *frame;
         s_frame *global_frame;
-        u_form *specials;
+        s_skiplist *specials;
         s_block *blocks;
         s_error_handler *error_handler;
         s_tags *tags;

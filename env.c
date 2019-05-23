@@ -33,10 +33,16 @@ u_form ** symbol_macro (s_symbol *sym, s_env *env)
 
 u_form ** symbol_special (s_symbol *sym, s_env *env)
 {
-        u_form *f;
-        f = assoc((u_form*) sym, env->specials);
-        if (consp(f))
-                return &f->cons.cdr;
+        s_cons search;
+        s_skiplist_node *n;
+        search.type = FORM_CONS;
+        search.car = (u_form*) sym;
+        search.cdr = NULL;
+        n = skiplist_find(env->specials, &search);
+        if (n) {
+                s_cons *binding = (s_cons*) n->value;
+                return &binding->cdr;
+        }
         return NULL;
 }
 
@@ -164,7 +170,7 @@ void cspecial (const char *name, f_cfun *fun, s_env *env)
                 cf->cfun.name = name_sym;
                 cf->cfun.fun = fun;
                 c = cons((u_form*) name_sym, cf);
-                push(env->specials, c);
+                skiplist_insert(env->specials, c);
         }
 }
 
@@ -271,7 +277,8 @@ void env_init (s_env *env, s_stream *si)
         env->si = si;
         env->run = 1;
         env->frame = env->global_frame = new_frame(NULL);
-        env->specials = nil();
+        env->specials = new_skiplist(5, 4);
+        env->specials->compare = compare_frame_bindings;
         env->tags = NULL;
         init_packages(env);
         defparameter(sym("*package*", NULL),
