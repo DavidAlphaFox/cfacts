@@ -5,6 +5,7 @@
 
 struct frame
 {
+        unsigned long type;
         s_skiplist *variables;
         s_skiplist *functions;
         s_skiplist *macros;

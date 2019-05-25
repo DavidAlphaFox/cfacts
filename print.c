@@ -120,14 +120,14 @@ void prin1_double (s_double *dbl, FILE *stream)
 void prin1_skiplist (s_skiplist *sl, FILE *stream, s_env *env)
 {
         s_skiplist_node *n = skiplist_node_next(sl->head, 0);
-        fputc('(', stream);
+        fputc('[', stream);
         while (n) {
                 prin1((u_form*) n->value, stream, env);
                 n = skiplist_node_next(n, 0);
                 if (n)
                         fputc(' ', stream);
         }
-        fputc(')', stream);
+        fputc(']', stream);
 }
 
 void prin1 (u_form *f, FILE *stream, s_env *env)

@@ -18,6 +18,7 @@ cfacts_SOURCES = \
 	backtrace.c \
 	block.c \
 	cfacts.c \
+	compare.c \
 	env.c \
 	error.c \
 	eval.c \

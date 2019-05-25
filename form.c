@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "compare.h"
 #include "env.h"
 #include "eval.h"
 #include "form.h"

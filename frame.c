@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include "compare.h"
 #include "error.h"
 #include "eval.h"
 #include "frame.h"
@@ -21,6 +22,7 @@ s_frame * new_frame (s_frame *parent)
 {
         s_frame *f = malloc(sizeof(s_frame));
         if (f) {
+                f->type = FORM_FRAME;
                 f->variables = NULL;
                 f->functions = NULL;
                 f->macros = NULL;

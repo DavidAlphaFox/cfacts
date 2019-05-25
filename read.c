@@ -7,6 +7,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+#include "compare.h"
 #include "env.h"
 #include "error.h"
 #include "eval.h"
@@ -161,6 +162,28 @@ u_form * read_cons (s_stream *stream, s_env *env)
         return NULL;
 }
 
+u_form * read_skiplist (s_stream *stream, s_env *env)
+{
+        int c = peek_char(stream);
+        if (c == '[') {
+                s_skiplist *sl = new_skiplist(5, 4);
+                sl->compare = compare_equal;
+                read_char(stream);
+                while (!read_spaces(stream) &&
+                       (c = peek_char(stream)) >= 0) {
+                        if (c == ']') {
+                                read_char(stream);
+                                return (u_form*) sl;
+                        }
+                        if (c == ')')
+                                error(env, "unexpected close "
+                                      "parenthesis");
+                        skiplist_insert(sl, read_form(stream, env));
+                }
+        }
+        return NULL;
+}
+
 u_form * read_string (s_stream *stream)
 {
         u_form *f = NULL;
@@ -194,7 +217,8 @@ u_form * read_string (s_stream *stream)
 int endchar (int c)
 {
         return c == '(' || c == ')' || c == '"' || c == ' ' ||
-                c == '\t' || c == '\r' || c == '\n' || c == '\'';
+                c == '\t' || c == '\r' || c == '\n' || c == '\'' ||
+                c == '[' || c == ']';
 }
 
 u_form * read_uninterned_symbol (s_stream *stream)
@@ -357,6 +381,8 @@ u_form * read_form (s_stream *stream, s_env *env)
         if ((f = read_comma(stream, env)))
                 return f;
         if ((f = read_cons(stream, env)))
+                return f;
+        if ((f = read_skiplist(stream, env)))
                 return f;
         if ((f = read_string(stream)))
                 return f;

@@ -47,6 +47,7 @@ int repl (s_env *env)
 int main ()
 {
         s_stream *stream;
+        int r;
         srand(42);
         if (isatty(0))
                 stream = stream_readline("cfacts> ");
@@ -54,5 +55,8 @@ int main ()
                 stream = stream_stdin();
         env_init(&g_env, stream);
         using_history();
-        return repl(&g_env);
+        r = repl(&g_env);
+        if (isatty(0))
+                fputs("\n", stdout);
+        return r;
 }

@@ -86,7 +86,8 @@ enum e_form_type { FORM_VALUES,
                    FORM_LAMBDA,
                    FORM_LONG,
                    FORM_DOUBLE,
-                   FORM_SKIPLIST };
+                   FORM_SKIPLIST,
+                   FORM_FRAME };
 
 #define null(x)    ((x) == nil())
 #define valuesp(x) ((x) && (x)->type == FORM_VALUES)

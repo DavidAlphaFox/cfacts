@@ -15,7 +15,6 @@ s_symbol * intern_ (const char *s, s_package *pkg);
 s_symbol * sym (const char *s, s_env *env);
 void unintern (s_string *s, s_package *pkg);
 
-int compare_symbols (void *a, void *b);
 void          init_packages (s_env *env);
 s_package *   find_package (s_symbol *name, s_env *env);
 s_package *        package (s_env *env);

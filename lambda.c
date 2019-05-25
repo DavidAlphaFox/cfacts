@@ -68,7 +68,7 @@ u_form * funcall_lambda (s_lambda *lambda, u_form *args, s_env *env)
         int rest = 0;
         env->frame = new_frame(lambda->frame);
         push_backtrace_frame((u_form*) lambda,
-                             (u_form*) env->frame->variables,
+                             (u_form*) env->frame,
                              env);
         while (consp(f) && consp(a)) {
                 s_symbol *s = &f->cons.car->symbol;

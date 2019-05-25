@@ -7,27 +7,11 @@
 #include <string.h>
 #define __USE_MISC 1
 #include <math.h>
+#include "compare.h"
 #include "env.h"
 #include "eval.h"
 #include "form.h"
 #include "package.h"
-
-int compare_symbols (void *a, void *b)
-{
-        s_symbol *sa = (s_symbol*) a;
-        s_symbol *sb = (s_symbol*) b;
-        int c;
-        if (sa == sb)
-                return 0;
-        if (!sa)
-                return -1;
-        if (!sb)
-                return 1;
-        c = skiplist_compare_ptr(sa->package, sb->package);
-        if (c != 0)
-                return c;
-        return strcmp(string_str(sa->string), string_str(sb->string));
-}
 
 s_package * common_lisp_package ()
 {
@@ -148,19 +132,6 @@ void unintern (s_string *s, s_package *pkg)
 void delete_package (s_package *pkg)
 {
         (void) pkg;
-}
-
-int compare_packages (void *a, void *b)
-{
-        s_package *pa = (s_package*) a;
-        s_package *pb = (s_package*) b;
-        if (!a && !b)
-                return 0;
-        if (!a)
-                return -1;
-        if (!b)
-                return 1;
-        return compare_symbols(pa->name, pb->name);
 }
 
 s_package * find_package (s_symbol *name, s_env *env)

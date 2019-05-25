@@ -47,8 +47,15 @@ void print_backtrace (s_backtrace_frame *bf, FILE *stream, s_env *env)
 {
         for (; bf; bf = bf->next) {
                 print(bf->fun, stream, env);
-                if (bf->vars)
-                        prin1(bf->vars, stream, env);
+                if (bf->vars) {
+                        if (bf->vars->type == FORM_FRAME) {
+                                s_frame *f = (s_frame*) bf->vars;
+                                if (f->variables)
+                                        prin1((u_form*) f->variables,
+                                              stream, env);
+                        } else
+                                prin1(bf->vars, stream, env);
+                }
         }
 }
 
