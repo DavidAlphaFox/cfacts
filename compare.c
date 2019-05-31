@@ -46,6 +46,10 @@ int compare_equal (void *a, void *b)
                         fa->dbl.dbl > fb->dbl.dbl ? 1 : 0);
         case FORM_SKIPLIST:
                 return skiplist_compare_ptr(fa, fb);
+        case FORM_VALUES:
+        case FORM_SKIPLIST_NODE:
+        case FORM_FRAME:
+                break;
         }
         assert(0);
         return -1;
