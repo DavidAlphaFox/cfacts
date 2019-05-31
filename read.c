@@ -91,6 +91,7 @@ int refill (s_stream *stream)
                         add_history(stream->s);
                         stream->end = strlen(stream->s);
                 }
+                stream->line++;
         }
         return 0;
 }
