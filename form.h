@@ -4,8 +4,23 @@
 #include "skiplist.h"
 #include "typedefs.h"
 
+typedef enum form_type {
+        FORM_VALUES,
+        FORM_CONS,
+        FORM_STRING,
+        FORM_SYMBOL,
+        FORM_PACKAGE,
+        FORM_CFUN,
+        FORM_LAMBDA,
+        FORM_LONG,
+        FORM_DOUBLE,
+        FORM_SKIPLIST,
+        FORM_SKIPLIST_NODE,
+        FORM_FRAME
+} e_form_type;
+
 struct values {
-        unsigned long type;
+        e_form_type type;
         unsigned long count;
 };
 
@@ -13,39 +28,39 @@ struct values {
 #define value_(v) (values_(v)[0])
 
 struct cons {
-        unsigned long type;
+        e_form_type type;
         u_form *car;
         u_form *cdr;
 };
 
 struct string {
-        unsigned long type;
+        e_form_type type;
         unsigned long length;
 };
 
 #define string_str(s) ((char*)(((s_string*) s) + 1))
 
 struct symbol {
-        unsigned long type;
+        e_form_type type;
         s_package *package;
         s_string *string;
 };
 
 struct package {
-        unsigned long type;
+        e_form_type type;
         s_symbol *name;
         s_skiplist *symbols;
         u_form *uses;
 };
 
 struct cfun {
-        unsigned long type;
+        e_form_type type;
         s_symbol *name;
         f_cfun *fun;
 };
 
 struct lambda {
-        unsigned long type;
+        e_form_type type;
         s_symbol *lambda_type;
         s_symbol *name;
         u_form *lambda_list;
@@ -54,17 +69,17 @@ struct lambda {
 };
 
 struct lng {
-        unsigned long type;
+        e_form_type type;
         long lng;
 };
 
 struct dbl {
-        unsigned long type;
+        e_form_type type;
         double dbl;
 };
 
 union form {
-        unsigned long type;
+        e_form_type type;
         s_values values;
         s_cons cons;
         s_string string;
@@ -75,19 +90,8 @@ union form {
         s_long lng;
         s_double dbl;
         s_skiplist skiplist;
+        s_skiplist_node skiplist_node;
 };
-
-enum e_form_type { FORM_VALUES,
-                   FORM_CONS,
-                   FORM_STRING,
-                   FORM_SYMBOL,
-                   FORM_PACKAGE,
-                   FORM_CFUN,
-                   FORM_LAMBDA,
-                   FORM_LONG,
-                   FORM_DOUBLE,
-                   FORM_SKIPLIST,
-                   FORM_FRAME };
 
 #define null(x)    ((x) == nil())
 #define valuesp(x) ((x) && (x)->type == FORM_VALUES)
