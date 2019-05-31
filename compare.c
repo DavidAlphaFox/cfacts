@@ -55,6 +55,21 @@ int compare_equal (void *a, void *b)
         return -1;
 }
 
+int compare_frame_bindings (void *a, void *b)
+{
+        s_cons *ca = (s_cons*) a;
+        s_cons *cb = (s_cons*) b;
+        if (a == b)
+                return 0;
+        if (!a)
+                return -1;
+        if (!b)
+                return 1;
+        assert(ca->type == FORM_CONS);
+        assert(cb->type == FORM_CONS);
+        return compare_symbols(ca->car, cb->car);
+}
+
 int compare_packages (void *a, void *b)
 {
         s_package *pa = (s_package*) a;

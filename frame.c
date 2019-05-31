@@ -5,19 +5,6 @@
 #include "frame.h"
 #include "package.h"
 
-int compare_frame_bindings (void *a, void *b)
-{
-        s_cons *ca = (s_cons*) a;
-        s_cons *cb = (s_cons*) b;
-        if (a == b)
-                return 0;
-        if (!a)
-                return -1;
-        if (!b)
-                return 1;
-        return compare_symbols(ca->car, cb->car);
-}
-
 s_frame * new_frame (s_frame *parent)
 {
         s_frame *f = malloc(sizeof(s_frame));
