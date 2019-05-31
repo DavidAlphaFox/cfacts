@@ -219,6 +219,20 @@ u_form * defmacro (s_symbol *name, u_form *lambda_list, u_form *body,
         return (u_form*) name;
 }
 
+
+u_form * fmakunbound (s_symbol *name, s_env *env)
+{
+        s_cons search;
+        search.type = FORM_CONS;
+        search.car = (u_form*) name;
+        search.cdr = NULL;
+        if (env->global_frame->functions)
+                skiplist_delete(env->global_frame->functions, &search);
+        if (env->global_frame->macros)
+                skiplist_delete(env->global_frame->macros, &search);
+        return (u_form*) name;
+}
+
 u_form * labels (u_form *bindings, u_form *body, s_env *env)
 {
         static s_symbol *labels_sym = NULL;
@@ -348,6 +362,7 @@ void env_init (s_env *env, s_stream *si)
         cspecial("function",       cspecial_function,       env);
         cfun("macro-function", cfun_macro_function, env);
         cspecial("defmacro",       cspecial_defmacro,       env);
+        cfun("fmakunbound",    cfun_fmakunbound,    env);
         cspecial("labels",         cspecial_labels,         env);
         cspecial("flet",           cspecial_flet,           env);
         cfun("error",          cfun_error,          env);

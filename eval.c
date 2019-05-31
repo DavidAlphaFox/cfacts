@@ -1170,6 +1170,14 @@ u_form * cspecial_defmacro (u_form *args, s_env *env)
                         args->cons.cdr->cons.cdr, env);
 }
 
+u_form * cfun_fmakunbound (u_form *args, s_env *env)
+{
+        if (!consp(args) || !symbolp(args->cons.car) ||
+            args->cons.cdr != nil())
+                return error(env, "invalid arguments for fmakunbound");
+        return fmakunbound(&args->cons.car->symbol, env);
+}
+
 u_form * cfun_macro_function (u_form *args, s_env *env)
 {
         u_form **m;

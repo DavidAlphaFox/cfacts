@@ -43,6 +43,7 @@ u_form * defun (s_symbol *name, u_form *lambda_list, u_form *body,
 u_form * function (s_symbol *name, s_env *env);
 u_form * defmacro (s_symbol *name, u_form *lambda_list, u_form *body,
                    s_env *env);
+u_form * fmakunbound (s_symbol *name, s_env *env);
 u_form * labels (u_form *bindings, u_form *body, s_env *env);
 u_form * flet (u_form *bindings, u_form *body, s_env *env);
 

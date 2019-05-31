@@ -103,6 +103,7 @@ u_form * cspecial_defun (u_form *args, s_env *env);
 u_form * cspecial_function (u_form *args, s_env *env);
 u_form * cfun_macro_function (u_form *args, s_env *env);
 u_form * cspecial_defmacro (u_form *args, s_env *env);
+u_form * cfun_fmakunbound (u_form *args, s_env *env);
 u_form * cspecial_labels (u_form *args, s_env *env);
 u_form * cspecial_flet (u_form *args, s_env *env);
 
