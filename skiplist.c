@@ -8,11 +8,12 @@
 
 long int random(void);
 
-s_skiplist_node * new_skiplist_node (void *value, int height)
+s_skiplist_node * new_skiplist_node (void *value, unsigned long height)
 {
         s_skiplist_node *n = malloc(sizeof(s_skiplist_node) +
                                     height * sizeof(void*));
         if (n) {
+                n->type = FORM_SKIPLIST_NODE;
                 n->value = value;
                 n->height = height;
                 bzero(skiplist_node_links(n), height * sizeof(void*));

@@ -4,12 +4,14 @@
 #include <math.h>
 
 typedef struct skiplist_node {
+        unsigned long type;
         void *value;
         unsigned long height;
 } s_skiplist_node;
 
-s_skiplist_node * new_skiplist_node (void *value, int height);
-#define               skiplist_node_links(n) ((s_skiplist_node**)((n) + 1))
+s_skiplist_node * new_skiplist_node (void *value, unsigned long height);
+#define               skiplist_node_links(n) \
+        ((s_skiplist_node**) (((s_skiplist_node*) n) + 1))
 #define               skiplist_node_next(n, height) (skiplist_node_links(n)[height])
 void                  skiplist_node_insert (s_skiplist_node *n,
                                             s_skiplist_node *pred);
