@@ -21,6 +21,12 @@ s_skiplist_node * new_skiplist_node (void *value, unsigned long height)
         return n;
 }
 
+s_skiplist_node * skiplist_node_next_ (s_skiplist_node *n,
+                                       unsigned long height)
+{
+        return skiplist_node_links(n)[height];
+}
+
 /*
   Random height
   -------------
