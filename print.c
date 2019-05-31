@@ -135,6 +135,10 @@ void prin1 (u_form *f, FILE *stream, s_env *env)
         if (!f) {
                 return;
         }
+        if (!stream)
+                stream = stdout;
+        if (!env)
+                env = &g_env;
         switch (f->type) {
         case FORM_VALUES:
                 prin1(value_(f), stream, env);
@@ -172,6 +176,10 @@ void prin1 (u_form *f, FILE *stream, s_env *env)
 
 void print (u_form *f, FILE *stream, s_env *env)
 {
+        if (!stream)
+                stream = stdout;
+        if (!env)
+                env = &g_env;
         fputs("\n", stream);
         prin1(f, stream, env);
         fputc(' ', stream);
