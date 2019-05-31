@@ -160,17 +160,23 @@ s_skiplist_node * skiplist_insert (s_skiplist *sl, void *value)
 
 void * skiplist_delete (s_skiplist *sl, void *x)
 {
-        unsigned level;
-        s_skiplist_node *pred = skiplist_pred(sl, x);
-        s_skiplist_node *n = skiplist_node_next(pred, 0);
+        unsigned long level;
+        s_skiplist_node *pred;
+        s_skiplist_node *next;
         void *value;
-        if (!n || sl->compare(n->value, x) != 0)
+        pred = skiplist_pred(sl, x);
+        assert(pred);
+        next = skiplist_node_next(pred, 0);
+        assert(next);
+        next = skiplist_node_next(next, 0);
+        if (!next || sl->compare(x, next->value) != 0)
                 return NULL;
-        for (level = 0; level < n->height; level++) {
+        for (level = 0; level < next->height; level++) {
                 s_skiplist_node *p = skiplist_node_next(pred, level);
-                skiplist_node_next(p, level) = skiplist_node_next(n, level);
+                skiplist_node_next(p, level) =
+                        skiplist_node_next(next, level);
         }
-        value = n->value;
+        value = next->value;
         sl->length--;
         return value;
 }
