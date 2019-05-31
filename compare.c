@@ -94,8 +94,9 @@ int compare_symbols (void *a, void *b)
                 return -1;
         if (!sb)
                 return 1;
-        c = skiplist_compare_ptr(sa->package, sb->package);
-        if (c != 0)
+        assert(sa->type == FORM_SYMBOL);
+        assert(sb->type == FORM_SYMBOL);
+        if ((c = skiplist_compare_ptr(sa->package, sb->package)))
                 return c;
         return strcmp(string_str(sa->string), string_str(sb->string));
 }
