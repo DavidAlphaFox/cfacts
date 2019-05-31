@@ -148,6 +148,7 @@ s_skiplist_node * skiplist_insert (s_skiplist *sl, void *value)
         s_skiplist_node *next = skiplist_node_next(pred, 0);
         unsigned height;
         s_skiplist_node *n;
+        next = skiplist_node_next(next, 0);
         if (next && sl->compare(value, next->value) == 0)
                 return next;
         height = skiplist_random_height(sl);
