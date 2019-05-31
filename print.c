@@ -130,6 +130,19 @@ void prin1_skiplist (s_skiplist *sl, FILE *stream, s_env *env)
         fputc(']', stream);
 }
 
+void prin1_skiplist_node (s_skiplist_node *n, FILE *stream, s_env *env)
+{
+        unsigned long level;
+        fputs("#[", stream);
+        prin1(n->value, stream, env);
+        for (level = 0; level < n->height; level++) {
+                s_skiplist_node *next = skiplist_node_next(n, level);
+                fputc(' ', stream);
+                prin1(next->value, stream, env);
+        }
+        fputc(']', stream);
+}
+
 void prin1 (u_form *f, FILE *stream, s_env *env)
 {
         if (!f) {
@@ -168,6 +181,9 @@ void prin1 (u_form *f, FILE *stream, s_env *env)
                 break;
         case FORM_SKIPLIST:
                 prin1_skiplist(&f->skiplist, stream, env);
+                break;
+        case FORM_SKIPLIST_NODE:
+                prin1_skiplist_node(&f->skiplist_node, stream, env);
                 break;
         default:
                 error(env, "unknown form type");
