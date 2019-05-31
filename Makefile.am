@@ -32,3 +32,5 @@ cfacts_SOURCES = \
 	skiplist.c \
 	tags.c \
 	unwind_protect.c
+
+SUBDIRS = tests

@@ -9,6 +9,7 @@ AC_CONFIG_HEADERS([config.h:config.h.in])
 AM_INIT_AUTOMAKE
 AM_PROG_AR
 
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.6])
 AC_PROG_CC
 
 LT_INIT()
@@ -40,5 +41,6 @@ AM_CONDITIONAL([DEBUG], [test x"$debug" = x"true"])
 
 AC_FUNC_ALLOCA
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile
+                 tests/Makefile])
 AC_OUTPUT
