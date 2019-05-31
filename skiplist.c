@@ -71,7 +71,7 @@ static void skiplist_height_table_ (s_skiplist *sl, double spacing)
 {
         unsigned h;
         double w = spacing;
-        double end = 1;
+        double end = w;
         for (h = 0; h < sl->max_height; h++) {
                 w *= spacing;
                 end += w;
