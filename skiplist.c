@@ -137,7 +137,7 @@ unsigned skiplist_random_height (s_skiplist *sl)
         long max = skiplist_height_table(sl)[sl->max_height - 1];
         long k = random() % max;
         int i;
-        for (i = 0; k < skiplist_height_table(sl)[i]; i++)
+        for (i = 0; k > skiplist_height_table(sl)[i]; i++)
                 ;
         return sl->max_height - i;
 }
