@@ -78,6 +78,17 @@ u_form * defparameter (s_symbol *name, u_form *value, s_env *env)
         return (u_form*) name;
 }
 
+u_form * makunbound (s_symbol *name, s_env *env)
+{
+        s_cons search;
+        search.type = FORM_CONS;
+        search.car = (u_form*) name;
+        search.cdr = NULL;
+        if (env->global_frame->variables)
+                skiplist_delete(env->global_frame->variables, &search);
+        return (u_form*) name;
+}
+
 u_form * let_star (u_form *bindings, u_form *body, s_env *env)
 {
         s_frame *frame = env->frame;
@@ -324,6 +335,7 @@ void env_init (s_env *env, s_stream *si)
         cspecial("let*",           cspecial_let_star,       env);
         cspecial("defvar",         cspecial_defvar,         env);
         cspecial("defparameter",   cspecial_defparameter,   env);
+        cfun("makunbound",     cfun_makunbound,     env);
         cspecial("block",          cspecial_block,          env);
         cspecial("return-from",    cspecial_return_from,    env);
         cspecial("return",         cspecial_return,         env);

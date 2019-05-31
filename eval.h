@@ -89,6 +89,7 @@ u_form * cspecial_let_star (u_form *args, s_env *env);
 u_form * cspecial_defvar (u_form *args, s_env *env);
 u_form * cspecial_defparameter (u_form *args, s_env *env);
 u_form * cspecial_setq (u_form *args, s_env *env);
+u_form * cfun_makunbound (u_form *args, s_env *env);
 
 u_form * cspecial_block (u_form *args, s_env *env);
 u_form * cspecial_return_from (u_form *args, s_env *env);

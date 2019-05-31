@@ -1025,6 +1025,14 @@ u_form * cspecial_defparameter (u_form *args, s_env *env)
                             env);
 }
 
+u_form * cfun_makunbound (u_form *args, s_env *env)
+{
+        if (!consp(args) || !symbolp(args->cons.car) ||
+            args->cons.cdr != nil())
+                return error(env, "invalid arguments for makunbound");
+        return makunbound(&args->cons.car->symbol, env);
+}
+
 u_form * cspecial_block (u_form *args, s_env *env)
 {
         if (!consp(args) || !symbolp(args->cons.car))
