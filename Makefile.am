@@ -7,9 +7,9 @@ include_HEADERS =
 lib_LTLIBRARIES =
 
 if DEBUG
-AM_CFLAGS = -DDEBUG -O0 -ggdb -ansi -pedantic
+AM_CFLAGS = -DDEBUG -O0 -ggdb -std=c99 -pedantic
 else
-AM_CFLAGS = -DNDEBUG -O2 -ansi -pedantic
+AM_CFLAGS = -DNDEBUG -O2 -std=c99 -pedantic
 endif
 
 bin_PROGRAMS += cfacts
@@ -18,6 +18,7 @@ cfacts_SOURCES = \
 	backtrace.c \
 	block.c \
 	cfacts.c \
+	city.c \
 	compare.c \
 	env.c \
 	error.c \

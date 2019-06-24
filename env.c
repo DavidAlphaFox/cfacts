@@ -388,6 +388,7 @@ void env_init (s_env *env, s_stream *si)
                  env);
         cspecial("multiple-value-setq", cspecial_multiple_value_setq,
                  env);
+	cfun("sxhash",         cfun_sxhash,         env);
         load_file("init.lisp", env);
         load_file("backquote.lisp", env);
         defparameter(sym("*package*", NULL),

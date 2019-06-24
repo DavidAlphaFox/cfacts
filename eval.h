@@ -138,4 +138,6 @@ u_form * cspecial_multiple_value_bind (u_form *args, s_env *env);
 u_form * cspecial_multiple_value_list (u_form *args, s_env *env);
 u_form * cspecial_multiple_value_setq (u_form *args, s_env *env);
 
+u_form * cfun_sxhash (u_form *args, s_env *env);
+
 #endif
