@@ -1,8 +1,9 @@
 #ifndef FORM_H
 #define FORM_H
 
-#include "skiplist.h"
 #include "typedefs.h"
+#include "skiplist.h"
+#include "frame.h"
 
 typedef enum form_type {
         FORM_VALUES,
@@ -16,7 +17,8 @@ typedef enum form_type {
         FORM_DOUBLE,
         FORM_SKIPLIST,
         FORM_SKIPLIST_NODE,
-        FORM_FRAME
+        FORM_FRAME,
+	FORM_HASHTABLE
 } e_form_type;
 
 struct values {
@@ -78,6 +80,8 @@ struct dbl {
         double dbl;
 };
 
+#include "hashtable.h"
+
 union form {
         e_form_type type;
         s_values values;
@@ -91,6 +95,8 @@ union form {
         s_double dbl;
         s_skiplist skiplist;
         s_skiplist_node skiplist_node;
+        s_frame frame;
+        s_hashtable hashtable;
 };
 
 #define null(x)    ((x) == nil())
@@ -105,6 +111,7 @@ union form {
 #define integerp(x) ((x) && (x)->type == FORM_LONG)
 #define floatp(x) ((x) && (x)->type == FORM_DOUBLE)
 #define numberp(x) (integerp(x) || floatp(x))
+#define hashtablep(x) ((x) && (x)->type == FORM_HASHTABLE)
 
 #define value(x) (valuesp(x) ? value_(x) : x)
 #define push(place, x) place = cons(x, place)

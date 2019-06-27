@@ -14,6 +14,7 @@ u_form * car (u_form *form);
 u_form * cdr (u_form *form);
 u_form * caar (u_form *form);
 u_form * cadr (u_form *form);
+u_form * cdar (u_form *form);
 u_form * cddr (u_form *form);
 u_form * cadar (u_form *form);
 u_form * caddr (u_form *form);
@@ -22,6 +23,7 @@ u_form * assoc (u_form *item, u_form *alist);
 u_form * last (u_form *list);
 long length (u_form *list);
 u_form * reverse (u_form *list);
+u_form * getf (u_form *list, u_form *indicator, u_form *def);
 
 u_form * cons_function (u_form *form);
 u_form * cons_backquote (u_form *form);
@@ -137,7 +139,5 @@ u_form * cspecial_nth_value (u_form *args, s_env *env);
 u_form * cspecial_multiple_value_bind (u_form *args, s_env *env);
 u_form * cspecial_multiple_value_list (u_form *args, s_env *env);
 u_form * cspecial_multiple_value_setq (u_form *args, s_env *env);
-
-u_form * cfun_sxhash (u_form *args, s_env *env);
 
 #endif

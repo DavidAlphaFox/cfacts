@@ -2,7 +2,6 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "block.h"
-#include "city.h"
 #include "env.h"
 #include "error.h"
 #include "eval.h"
@@ -800,6 +799,16 @@ u_form * cfun_assoc (u_form *args, s_env *env)
                 return error(env, "invalid arguments for assoc");
         return assoc(args->cons.car,
                      args->cons.cdr->cons.car);
+}
+
+u_form * getf (u_form *plist, u_form *indicator, u_form *def)
+{
+        while (consp(plist) && consp(plist->cons.cdr)) {
+                if (eql(plist->cons.car, indicator))
+                        return plist->cons.cdr->cons.car;
+                plist = plist->cons.cdr->cons.cdr;
+        }
+        return def;
 }
 
 u_form * last (u_form *x)
@@ -1623,72 +1632,4 @@ u_form * cspecial_multiple_value_setq (u_form *args, s_env *env)
                 vars = vars->cons.cdr;
         }
         return result;
-}
-
-long update_hash_ (uint64 *h, void *buf, size_t len)
-{
-  *h = CityHash64WithSeed((const char *)buf, len, *h);
-  return (long) *h;
-}
-
-long update_hash_string (uint64 *h, s_string *s)
-{
-  *h = CityHash64WithSeed(string_str(s), s->length, *h);
-  return (long) *h;
-}
-
-long update_hash (uint64 *h, u_form *x)
-{
-  if (x)
-    switch (x->type) {
-    case FORM_VALUES:
-      return update_hash(h, value_(x));
-    case FORM_CONS:
-      update_hash_(h, &x->type, sizeof(x->type));
-      update_hash(h, x->cons.car);
-      return update_hash(h, x->cons.cdr);
-    case FORM_STRING:
-      update_hash_(h, &x->type, sizeof(x->type));
-      return update_hash_string(h, &x->string);
-    case FORM_SYMBOL:
-      update_hash_(h, &x->type, sizeof(x->type));
-      update_hash_string(h, x->symbol.package->name->string);
-      update_hash_(h, ":", 1);
-      return update_hash_string(h, x->symbol.string);
-    case FORM_PACKAGE:
-      update_hash_(h, &x->type, sizeof(x->type));
-      return update_hash_string(h, x->package.name->string);
-    case FORM_CFUN:
-      update_hash_(h, &x->type, sizeof(x->type));
-      update_hash(h, x->cfun.name);
-      return update_hash_(h, &x->cfun.cfun, sizeof(void*));
-    case FORM_LAMBDA:
-    case FORM_SKIPLIST:
-    case FORM_SKIPLIST_NODE:
-      update_hash_(h, &x->type, sizeof(x->type));
-      return update_hash_(h, &x, sizeof(u_form*));
-    case FORM_LONG:
-      update_hash_(h, &x->type, sizeof(x->type));
-      return update_hash_(h, &x->lng.lng, sizeof(x->lng.lng));
-    case FORM_DOUBLE:
-      update_hash_(h, &x->type, sizeof(x->type));
-      return update_hash_(h, &x->dbl.dbl, sizeof(x->dbl.dbl));
-    default:
-      break;
-  }
-  assert(0);
-  return 0;
-}
-
-long sxhash (u_form *x)
-{
-  uint64 h = 0;
-  return update_hash(&h, x);
-}
-
-u_form * cfun_sxhash (u_form *args, s_env *env)
-{
-  if (!consp(args) || args->cons.cdr != nil())
-    return error(env, "invalid arguments for sxhash");
-  return (u_form*) new_long(sxhash(args->cons.car));
 }

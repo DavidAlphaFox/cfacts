@@ -26,6 +26,7 @@ cfacts_SOURCES = \
 	form.c \
 	form_string.c \
 	frame.c \
+	hashtable.c \
 	lambda.c \
 	package.c \
 	print.c \

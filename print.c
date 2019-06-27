@@ -143,6 +143,19 @@ void prin1_skiplist_node (s_skiplist_node *n, FILE *stream, s_env *env)
         fputc(']', stream);
 }
 
+void prin1_frame (s_frame *f, FILE *stream, s_env *env)
+{
+        (void) f;
+        (void) env;
+        fputs("#<frame>", stream);
+}
+
+void prin1_hashtable (s_hashtable *h, FILE *stream, s_env *env)
+{
+        (void) env;
+        fprintf(stream, "#<hashtable %li entries>", h->count);
+}
+
 void prin1 (u_form *f, FILE *stream, s_env *env)
 {
         if (!f) {
@@ -186,8 +199,12 @@ void prin1 (u_form *f, FILE *stream, s_env *env)
         case FORM_SKIPLIST_NODE:
                 prin1_skiplist_node(&f->skiplist_node, stream, env);
                 break;
-        default:
-                error(env, "unknown form type");
+        case FORM_FRAME:
+                prin1_frame(&f->frame, stream, env);
+                break;
+        case FORM_HASHTABLE:
+                prin1_hashtable(&f->hashtable, stream, env);
+                break;
         }
 }
 

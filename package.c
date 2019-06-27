@@ -118,6 +118,12 @@ s_symbol * sym (const char *s, s_env *env)
         return intern_(s, pkg);
 }
 
+s_symbol * kw (const char *s)
+{
+        s_package *pkg = keyword_package();
+        return intern_(s, pkg);
+}
+
 void unintern (s_string *s, s_package *pkg)
 {
         s_symbol sym;

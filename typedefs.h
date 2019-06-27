@@ -19,6 +19,7 @@ typedef struct block s_block;
 typedef struct env s_env;
 typedef struct error_handler s_error_handler;
 typedef struct frame s_frame;
+typedef struct hashtable s_hashtable;
 typedef struct stream s_stream;
 typedef struct tags s_tags;
 typedef struct unwind_protect s_unwind_protect;

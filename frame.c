@@ -125,16 +125,6 @@ void fdb_rest (u_form *lambda_list, s_symbol *rest, u_form **args,
         *args = nil();
 }
 
-u_form * getf (u_form *plist, u_form *indicator, u_form *def)
-{
-        while (consp(plist) && consp(plist->cons.cdr)) {
-                if (eql(plist->cons.car, indicator))
-                        return plist->cons.cdr->cons.car;
-                plist = plist->cons.cdr->cons.cdr;
-        }
-        return def;
-}
-
 void fdb_plist (u_form *lambda_term, u_form *plist, s_frame *frame,
                 s_env *env)
 {
