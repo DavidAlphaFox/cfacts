@@ -9,7 +9,7 @@ s_skiplist *g_sl = NULL;
 void setup_inserts ()
 {
         g_sl = new_skiplist(5, 4);
- }
+}
 
 void teardown_inserts ()
 {
@@ -248,7 +248,6 @@ Suite * skiplist_suite(void)
     tcase_add_test(tc_deletes, test_skiplist_delete_middle);
     tcase_add_test(tc_deletes, test_skiplist_delete_all);
     suite_add_tcase(s, tc_deletes);
-
     return s;
 }
 
