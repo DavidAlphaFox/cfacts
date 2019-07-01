@@ -11,6 +11,7 @@ void init_hashtable_buckets (s_hashtable *h)
 {
         long i;
         h->buckets = malloc(h->size * sizeof(u_form*));
+        h->count = 0;
         for (i = 0; i < h->size; i++)
                 h->buckets[i] = nil();
 }
@@ -24,7 +25,6 @@ s_hashtable * new_hashtable (long size,
         h = malloc(sizeof(s_hashtable));
         if (h) {
                 h->type = FORM_HASHTABLE;
-                h->count = 0;
                 h->size = size;
                 h->rehash_size_long = rehash_size_long;
                 h->rehash_size_double = rehash_size_double;
@@ -70,20 +70,14 @@ long hashtable_index (s_hashtable *h, u_form *key)
 
 u_form * gethash (s_hashtable *h, u_form *key)
 {
-        s_values *v = new_values(2);
         long index = hashtable_index(h, key);
         u_form *a = h->buckets[index];
         while (consp(a)) {
-                if (equal(caar(a), key)) {
-                        values_(v)[0] = cdar(a);
-                        values_(v)[1] = (u_form*) sym("t", NULL);
-                        return (u_form*) v;
-                }
+                if (equal(caar(a), key))
+                        return cdar(a);
                 a = a->cons.cdr;
         }
-        values_(v)[0] = nil();
-        values_(v)[1] = nil();
-        return (u_form*) v;
+        return NULL;
 }
 
 u_form * sethash (s_hashtable *h, u_form *key, u_form *value)
@@ -288,12 +282,22 @@ u_form * cfun_hash_table_size (u_form *args, s_env *env)
 u_form * cfun_gethash (u_form *args, s_env *env)
 {
         s_hashtable *h;
+        u_form *f;
+        s_values *v = new_values(2);
         if (!consp(args) || !consp(args->cons.cdr) ||
             !hashtablep(args->cons.cdr->cons.car) ||
             args->cons.cdr->cons.cdr != nil())
                 error(env, "invalid arguments for gethash");
         h = &args->cons.cdr->cons.car->hashtable;
-        return gethash(h, args->cons.car);
+        f = gethash(h, args->cons.car);
+        if (!f) {
+                values_(v)[0] = nil();
+                values_(v)[1] = nil();
+        } else {
+                values_(v)[0] = f;
+                values_(v)[1] = (u_form*) sym("t", NULL);
+        }
+        return (u_form*) v;
 }
 
 u_form * cfun_sethash (u_form *args, s_env *env)
