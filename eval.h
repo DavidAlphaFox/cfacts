@@ -24,6 +24,7 @@ u_form * last (u_form *list);
 long length (u_form *list);
 u_form * reverse (u_form *list);
 u_form * getf (u_form *list, u_form *indicator, u_form *def);
+u_form * sort (u_form *list, s_env *env);
 
 u_form * cons_function (u_form *form);
 u_form * cons_backquote (u_form *form);
@@ -85,6 +86,7 @@ u_form * cfun_nconc (u_form *args, s_env *env);
 u_form * cfun_notany (u_form *args, s_env *env);
 u_form * cfun_every (u_form *args, s_env *env);
 u_form * cfun_mapcar (u_form *args, s_env *env);
+u_form * cfun_sort (u_form *args, s_env *env);
 
 u_form * cspecial_let (u_form *args, s_env *env);
 u_form * cspecial_let_star (u_form *args, s_env *env);

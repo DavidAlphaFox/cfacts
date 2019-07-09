@@ -346,6 +346,7 @@ void env_init (s_env *env, s_stream *si)
         cfun("notany",          cfun_notany,          env);
         cfun("every",           cfun_every,           env);
         cfun("mapcar",          cfun_mapcar,          env);
+        cfun("sort",            cfun_sort,            env);
         cspecial("let",            cspecial_let,            env);
         cspecial("let*",           cspecial_let_star,       env);
         cspecial("defvar",         cspecial_defvar,         env);

@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include "block.h"
+#include "compare.h"
 #include "env.h"
 #include "error.h"
 #include "eval.h"
@@ -916,6 +917,45 @@ u_form * cfun_nconc (u_form *args, s_env *env)
 {
         (void) env;
         return nconc(args);
+}
+
+u_form * sort_list (u_form *list)
+{
+        long len = length(list);
+        while (len--) {
+                long i = len;
+                u_form *a = list;
+                while (i--) {
+                        if (compare_equal(a->cons.car,
+                                          a->cons.cdr->cons.car) > 0) {
+                                u_form *tmp = a->cons.car;
+                                a->cons.car = a->cons.cdr->cons.car;
+                                a->cons.cdr->cons.car = tmp;
+                        }
+                        a = a->cons.cdr;
+                }
+        }
+        return list;
+}
+
+u_form * sort (u_form *arg, s_env *env)
+{
+        switch (arg->type) {
+        case FORM_CONS:
+                return sort_list(arg);
+        case FORM_SYMBOL:
+                return arg;
+        default:
+                break;
+        }
+        return error(env, "don't know how to sort argument");
+}
+
+u_form * cfun_sort (u_form *args, s_env *env)
+{
+        if (!consp(args) || args->cons.cdr != nil())
+                return error(env, "invalid arguments for sort");
+        return sort(args->cons.car, env);
 }
 
 u_form * cfun_notany (u_form *args, s_env *env)
