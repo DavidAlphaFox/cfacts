@@ -1,5 +1,5 @@
 AC_PREREQ([2.59])
-AC_INIT([libdata], [0.1], [kmx.io], [libdata], [http://kmx.io/])
+AC_INIT([cfacts], [0.1], [kmx.io], [cfacts], [http://kmx.io/])
 CFLAGS="$CFLAGS -W -Wall -Werror"
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([build-aux/m4])
