@@ -1673,3 +1673,179 @@ u_form * cspecial_multiple_value_setq (u_form *args, s_env *env)
         }
         return result;
 }
+
+int lt (u_form *a, u_form *b, s_env *env)
+{
+        switch (a->type) {
+        case FORM_LONG:
+                switch (b->type) {
+                case FORM_LONG:
+                        return a->lng.lng < b->lng.lng;
+                case FORM_DOUBLE:
+                        return a->lng.lng < b->dbl.dbl;
+                default:
+                        break;
+                }
+        case FORM_DOUBLE:
+                switch (b->type) {
+                case FORM_LONG:
+                        return a->dbl.dbl < b->lng.lng;
+                case FORM_DOUBLE:
+                        return a->dbl.dbl < b->dbl.dbl;
+                default:
+                        break;
+                }
+        default:
+                break;
+        }
+        error(env, "invalid arguments for gte");
+        return 0;
+}
+
+int lte (u_form *a, u_form *b, s_env *env)
+{
+        switch (a->type) {
+        case FORM_LONG:
+                switch (b->type) {
+                case FORM_LONG:
+                        return a->lng.lng <= b->lng.lng;
+                case FORM_DOUBLE:
+                        return a->lng.lng <= b->dbl.dbl;
+                default:
+                        break;
+                }
+        case FORM_DOUBLE:
+                switch (b->type) {
+                case FORM_LONG:
+                        return a->dbl.dbl <= b->lng.lng;
+                case FORM_DOUBLE:
+                        return a->dbl.dbl <= b->dbl.dbl;
+                default:
+                        break;
+                }
+        default:
+                break;
+        }
+        error(env, "invalid arguments for gte");
+        return 0;
+}
+
+int gt (u_form *a, u_form *b, s_env *env)
+{
+        switch (a->type) {
+        case FORM_LONG:
+                switch (b->type) {
+                case FORM_LONG:
+                        return a->lng.lng > b->lng.lng;
+                case FORM_DOUBLE:
+                        return a->lng.lng > b->dbl.dbl;
+                default:
+                        break;
+                }
+        case FORM_DOUBLE:
+                switch (b->type) {
+                case FORM_LONG:
+                        return a->dbl.dbl > b->lng.lng;
+                case FORM_DOUBLE:
+                        return a->dbl.dbl > b->dbl.dbl;
+                default:
+                        break;
+                }
+        default:
+                break;
+        }
+        error(env, "invalid arguments for gte");
+        return 0;
+}
+
+int gte (u_form *a, u_form *b, s_env *env)
+{
+        switch (a->type) {
+        case FORM_LONG:
+                switch (b->type) {
+                case FORM_LONG:
+                        return a->lng.lng >= b->lng.lng;
+                case FORM_DOUBLE:
+                        return a->lng.lng >= b->dbl.dbl;
+                default:
+                        break;
+                }
+        case FORM_DOUBLE:
+                switch (b->type) {
+                case FORM_LONG:
+                        return a->dbl.dbl >= b->lng.lng;
+                case FORM_DOUBLE:
+                        return a->dbl.dbl >= b->dbl.dbl;
+                default:
+                        break;
+                }
+        default:
+                break;
+        }
+        error(env, "invalid arguments for gte");
+        return 0;
+}
+
+u_form * cfun_lt (u_form *args, s_env *env)
+{
+        u_form *cmp;
+        if (!consp(args))
+                return error(env, "invalid arguments for <");
+        cmp = args->cons.car;
+        args = args->cons.cdr;
+        while (consp(args)) {
+                if (gte(cmp, args->cons.car, env))
+                        return nil();
+                cmp = args->cons.car;
+                args = args->cons.cdr;
+        }
+        return (u_form*) sym("t", NULL);
+}
+
+u_form * cfun_lte (u_form *args, s_env *env)
+{
+        u_form *cmp;
+        if (!consp(args))
+                return error(env, "invalid arguments for <=");
+        cmp = args->cons.car;
+        args = args->cons.cdr;
+        while (consp(args)) {
+                if (gt(cmp, args->cons.car, env))
+                        return nil();
+                cmp = args->cons.car;
+                args = args->cons.cdr;
+        }
+        return (u_form*) sym("t", NULL);
+}
+
+u_form * cfun_gt (u_form *args, s_env *env)
+{
+        u_form *cmp;
+        if (!consp(args))
+                return error(env, "invalid arguments for >");
+        cmp = args->cons.car;
+        args = args->cons.cdr;
+        while (consp(args)) {
+                if (lte(cmp, args->cons.car, env))
+                        return nil();
+                cmp = args->cons.car;
+                args = args->cons.cdr;
+        }
+        return (u_form*) sym("t", NULL);
+}
+
+u_form * cfun_gte (u_form *args, s_env *env)
+{
+        u_form *cmp;
+        if (!consp(args))
+                return error(env, "invalid arguments for >=");
+        cmp = args->cons.car;
+        args = args->cons.cdr;
+        while (consp(args)) {
+                if (lt(cmp, args->cons.car, env))
+                        return nil();
+                cmp = args->cons.car;
+                args = args->cons.cdr;
+        }
+        return (u_form*) sym("t", NULL);
+}

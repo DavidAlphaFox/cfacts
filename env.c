@@ -402,6 +402,10 @@ void env_init (s_env *env, s_stream *si)
 	cfun("maphash",         cfun_maphash,         env);
 	cfun("clrhash",         cfun_clrhash,         env);
 	cfun("sxhash",          cfun_sxhash,          env);
+        cfun("<",               cfun_lt,              env);
+        cfun("<=",              cfun_lte,             env);
+        cfun(">",               cfun_gt,              env);
+        cfun(">=",              cfun_gte,             env);
         load_file("init.lisp", env);
         load_file("backquote.lisp", env);
         defparameter(sym("*package*", NULL),
