@@ -31,13 +31,12 @@ int repl (s_env *env)
                                 unsigned long i;
                                 for (i = 0; i < e->values.count; i++) {
                                         u_form *v = values_(e)[i];
-                                        prin1(v, stdout, env);
-                                        puts("");
+                                        print(v, stdout, env);
                                 }
                         } else {
-                                prin1(e, stdout, env);
-                                puts("");
+                                print(e, stdout, env);
                         }
+                        puts("");
                         pop_error_handler(env);
                 }
         }
